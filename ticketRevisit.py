@@ -70,7 +70,8 @@ def place_order() -> int:
   # TODO(you!): Implement ticket fulfilment.
   return randint(1, 10)
 
-MUSEUM_BOT_PROMPT = open("bot_prompt.txt", "r").read()
+# Alternative encodings to try if UTF-8 doesn't work
+MUSEUM_BOT_PROMPT = open("bot_prompt.txt", "r", encoding="ISO-8859-1").read()
 
 ordering_system = [add_to_order, get_order, remove_item, clear_order, confirm_order, place_order]
 
