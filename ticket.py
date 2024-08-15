@@ -236,8 +236,6 @@ You are a helpful and informative chatbot for booking tickets to the Albert Hall
 """
 
 booking_system = [add_booking, get_booking, remove_booking, clear_booking, calculate_price, confirm_booking, finalize_booking]
-query = input("ask me something: ")
-
 # Toggle this to switch between Gemini 1.5 with a system instruction, or Gemini 1.0 Pro.
 use_sys_inst = False
 
@@ -260,10 +258,11 @@ else:
 
 @retry.Retry(initial=30)
 def send_message(message):
-  return chat_session.send_message(message)
+  return convo.send_message(message)
 
 print('Welcome to MUSEUM bot!\n\n')
-
+confirmed_booking = []
+Visitor = []
 while not confirmed_booking:
   response = send_message(input('> '))
   print(response.text)
