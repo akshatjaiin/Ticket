@@ -81,7 +81,7 @@ def clear_booking() -> None:
     """
     in_progress_booking.clear()
 
-def calculate_price(visitor: dict) -> float:
+def calculate_price(visitor: Visitor) -> float:
     """
     Calculates the ticket price based on age, gender, and nationality.
 
@@ -105,7 +105,6 @@ def calculate_price(visitor: dict) -> float:
     try:
         age = visitor["age"]
         nationality = visitor["nationality"].lower()
-        # Rest of the code
     except KeyError as e:
         raise ValueError(f"Missing required visitor information: {e}")
 
