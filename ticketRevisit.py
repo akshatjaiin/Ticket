@@ -14,9 +14,9 @@ genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 order = []  # The in-progress order.
 placed_order = []  # The confirmed, completed order.
 
-def add_to_order(ticket: str, modifiers: Iterable[str] = ()) -> None:
-  """Adds the specified ticket to the customer's order, including any modifiers."""
-  order.append((ticket, modifiers))
+def add_to_order(name: str, modifiers: Iterable[str] = ()) -> None:
+  """Adds the specified name to the customer's order, including any modifiers."""
+  order.append((name, modifiers))
 
 
 def get_order() -> Iterable[tuple[str, Iterable[str]]]:
@@ -50,8 +50,8 @@ def confirm_order() -> str:
   if not order:
     print('  (no items)')
 
-  for ticket, modifiers in order:
-    print(f'  {ticket}')
+  for name, modifiers in order:
+    print(f'  {name}')
     if modifiers:
       print(f'   - {", ".join(modifiers)}')
 
@@ -61,12 +61,13 @@ def confirm_order() -> str:
 def place_order() -> int:
   """first enter the users detail in csv
     Returns:
+    
     processing the payment.
   """
   placed_order[:] = order.copy()
   clear_order()
 
-  # TODO(you!): Implement coffee fulfilment.
+  # TODO(you!): Implement ticket fulfilment.
   return randint(1, 10)
 
 MUSEUM_BOT_PROMPT = open("bot_prompt.txt", "r").read()
@@ -104,3 +105,5 @@ order = []
 while not placed_order:
   response = send_message(input('> '))
   print(response.text)
+
+# giving to much errors
