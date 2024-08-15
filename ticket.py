@@ -28,6 +28,8 @@ chat_session = model.start_chat(
   ]
 )
 
+
+
 MUSEUM_BOT_PROMPT = """
 You are a helpful and informative chatbot for booking tickets to the Albert Hall Museum in Jaipur. 
 
