@@ -1,5 +1,6 @@
 #  using gemini cookbook brista bots perspective
 import os
+import csv
 from random import randint
 from typing import Iterable
 from dotenv import load_dotenv
@@ -13,6 +14,10 @@ genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 
 order = []  # The in-progress order.
 placed_order = []  # The confirmed, completed order.
+
+def user_details(name: str, age: int, student: bool) -> dict:
+    """Store user details in a dictionary."""
+    return {"name": name, "age": age, "student": student}
 
 def add_to_order(name: str, modifiers: Iterable[str] = ()) -> None:
   """Adds the specified name to the customer's order, including any modifiers."""
@@ -46,7 +51,7 @@ def confirm_order() -> str:
     The user's free-text response.
   """
 
-  print('Your order:')
+  print(name)
   if not order:
     print('  (no items)')
 
@@ -58,23 +63,41 @@ def confirm_order() -> str:
   return input('Is this correct? ')
 
 
+def collect_user_details() -> dict:
+    """Collect user details and return them as a dictionary."""
+    name = input("Enter your name: ")
+    age = int(input("Enter your age: "))
+    student_input = input("Are you a student? (yes/no): ").strip().lower()
+    student = student_input == 'yes'
+
 def place_order() -> int:
-  """first enter the users detail in csv
+    """Processes the payment and stores user details in a CSV file.
+
     Returns:
-    
-    processing the payment.
-  """
-  placed_order[:] = order.copy()
-  clear_order()
+        Processing time for the order.
+    """
+    # Collect user details
+    user_info = collect_user_details()
+
+    # Write user details to a CSV file
+    with open('user_details.csv', mode='a', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=["name", "age", "student"])
+        writer.writerow(user_info)
+
+    # Move order to placed_order and clear the current order
+    placed_order[:] = order.copy()
+    clear_order()
+
+    placed_order[:] = order.copy()
+    clear_order()
 
   # TODO(you!): Implement ticket fulfilment.
-  return randint(1, 10)
+    return randint(1, 10)
 
 # Alternative encodings to try if UTF-8 doesn't work
 MUSEUM_BOT_PROMPT = open("bot_prompt.txt", "r", encoding="ISO-8859-1").read()
 
-
-ordering_system = [add_to_order, get_order, remove_item, clear_order, confirm_order, place_order]
+ordering_system = [add_to_order, user_details, get_order, remove_item, clear_order, confirm_order, collect_user_details, place_order]
 
 # Toggle this to switch between Gemini 1.5 with a system instruction, or Gemini 1.0 Pro.
 use_sys_inst = False
