@@ -44,7 +44,7 @@ def clear_order() -> None:
   order.clear()
 
 
-def confirm_order() -> str:
+def confirm_order(name) -> str:
   """Asks the customer if the order is correct.
 
   Returns:
@@ -63,21 +63,14 @@ def confirm_order() -> str:
   return input('Is this correct? ')
 
 
-def collect_user_details() -> dict:
-    """Collect user details and return them as a dictionary."""
-    name = input("Enter your name: ")
-    age = int(input("Enter your age: "))
-    student_input = input("Are you a student? (yes/no): ").strip().lower()
-    student = student_input == 'yes'
-
-def place_order() -> int:
+def place_order(name: str, student: bool, age: int) -> int:
     """Processes the payment and stores user details in a CSV file.
 
     Returns:
         Processing time for the order.
     """
     # Collect user details
-    user_info = collect_user_details()
+    user_info = user_info(name, age, student)
 
     # Write user details to a CSV file
     with open('user_details.csv', mode='a', newline='') as file:
@@ -95,9 +88,9 @@ def place_order() -> int:
     return randint(1, 10)
 
 # Alternative encodings to try if UTF-8 doesn't work
-MUSEUM_BOT_PROMPT = open("bot_prompt.txt", "r", encoding="ISO-8859-1").read()
+MUSEUM_BOT_PROMPT = open("new_prompt.txt", "r", encoding="ISO-8859-1").read()
 
-ordering_system = [add_to_order, user_details, get_order, remove_item, clear_order, confirm_order, collect_user_details, place_order]
+ordering_system = [add_to_order, user_details, get_order, remove_item, clear_order, confirm_order, place_order]
 
 # Toggle this to switch between Gemini 1.5 with a system instruction, or Gemini 1.0 Pro.
 use_sys_inst = False

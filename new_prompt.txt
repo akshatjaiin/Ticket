@@ -1,0 +1,1 @@
+ask the user for his name , age, nationality, is_student and call these functions in add_to_order, user_details, get_order, remove_item, clear_order, confirm_order, , place_order this order our goal is to pass user details in some way to place_order function
