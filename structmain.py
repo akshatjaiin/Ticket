@@ -16,7 +16,7 @@ model = genai.GenerativeModel(
 )
 
 MUSEUM_BOT_PROMPT = '''i want you to extract user information from text and return it in a structured format.
-
+your goal is to chat with user based on his user_info and give your response back to user inside a json within the user_info.
 **json schema:**
 
 user_info = {
@@ -27,6 +27,7 @@ user_info = {
  "ticket_type": str,
  "date": str,
  "your_response": str,
+ "response back to user": str,
 }
 
 Return Json, with respone
@@ -69,7 +70,7 @@ else:
     convo = model.start_chat(
         history=[
             {'role': 'user', 'parts': [MUSEUM_BOT_PROMPT]},
-            {'role': 'model', 'parts': ['OK I understand. I will do my best!']}
+            {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']}
         ],
         enable_automatic_function_calling=True
     )
@@ -102,5 +103,5 @@ while True:
         print("Error: Invalid JSON response from Gemini.")
         continue
 
-    
+   
     print(user_info)
