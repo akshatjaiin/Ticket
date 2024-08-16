@@ -247,7 +247,7 @@ def send_message(message):
     """Send a message to the conversation and return the response."""
     return convo.send_message(message)
 
-# Initialize order tracking
+# Initialize order trackingjson.loads(response.text)
 placed_order = []
 order = {}
 
@@ -262,9 +262,11 @@ while True:
     if user_input != "":
         response = send_message(user_input)
         print(type(response.text))
-
-    user_info = response
+        json_data = json.dumps(response, indent=4)
+        print(json_data)
+    print()
     # if user_info["confirm"] == True:
+        # pass
         # with open('user_data.csv', 'a', newline='') as csvfile:
         #     writer = csv.DictWriter(csvfile, fieldnames=user_info.keys())
         #     if csvfile.tell() == 0: 
