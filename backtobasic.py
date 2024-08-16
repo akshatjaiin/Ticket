@@ -1,5 +1,6 @@
 #  using gemini cookbook brista bots perspective
 import os
+import csv
 from random import randint
 from typing import Iterable
 from dotenv import load_dotenv
@@ -30,12 +31,13 @@ def date(date: str):
   "scedulate users booking"
   order["date"] = date
   
+def student(student: bool):
+  "check if the user is student or not"
+  order["student"] = student
 
 def get_order() -> Iterable[tuple[str, Iterable[str]]]:
   """Returns the customer's order."""
   return order
-
-
 
 def remove_item(key: str) -> None:
     """Remove an item from the order by its key."""
@@ -50,20 +52,15 @@ def remove_item(key: str) -> None:
     
     print(f"order content after removal: {order}")
 
-
-
 def clear_order() -> None:
   """Removes all items from the customer's order."""
   order.clear()
 
-
 def confirm_order() -> str:
   """Asks the customer if the order is correct.
-
   Returns:
     The user's free-text response.
   """
-
   print(order)
   if not order:
     print('  (no items)')
@@ -77,6 +74,11 @@ def place_order() -> int:
     
     processing the payment.
   """
+        
+    # Write user details to a CSV file
+  with open('user_details.csv', mode='a', newline='') as file:
+    writer = csv.DictWriter(file, fieldnames=["name", "age", "student", "nationality", "indian", "date"])
+    writer.writerow(order)
   placed_order[:] = order.copy()
   clear_order()
 
@@ -86,9 +88,8 @@ def place_order() -> int:
 # Alternative encodings to try if UTF-8 doesn't work
 MUSEUM_BOT_PROMPT = open("new_prompt.txt", "r", encoding="ISO-8859-1").read()
 
-
-ordering_system = [name, age, nationality, date, get_order, remove_item, clear_order, confirm_order, place_order]
 # Define the ordering system tools/functions
+ordering_system = [name, age, nationality, date, get_order, remove_item, clear_order, confirm_order, place_order]
 
 # Toggle this to switch between Gemini 1.5 with a system instruction, or Gemini 1.0 Pro.
 use_sys_inst = False
@@ -119,7 +120,7 @@ if use_sys_inst:
         model_name, tools=ordering_system, system_instruction=MUSEUM_BOT_PROMPT, safety_settings=safe)
     convo = model.start_chat(enable_automatic_function_calling=True)
 else:
-    model = genai.GenerativeModel(model_name, tools=ordering_system)
+    model = genai.GenerativeModel(model_name, tools=ordering_system, safety_settings=safe)
     convo = model.start_chat(
         history=[
             {'role': 'user', 'parts': [MUSEUM_BOT_PROMPT]},
