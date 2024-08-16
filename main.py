@@ -60,7 +60,7 @@ def clear_order() -> None:
   """Removes all items from the customer's order."""
   order.clear()
 
-def confirm_order() -> str:
+def confirm_order(confirm: bool) -> str:
   """Asks the customer if the order is correct.
   Returns:
     The user's free-text response.
@@ -81,7 +81,7 @@ def place_order() -> int:
         
     # Write user details to a CSV file
   with open('user_details.csv', mode='a', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=["name", "age", "student", "nationality", "indian", "date"])
+    writer = csv.DictWriter(file, fieldnames=["name", "age", "student", "indian", "date", "ticket_type"])
     writer.writerow(order)
   placed_order[:] = order.copy()
   clear_order()
