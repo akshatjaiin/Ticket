@@ -35,6 +35,10 @@ def student(student: bool):
   "check if the user is student or not"
   order["student"] = student
 
+def ticket_type(ticket_type: str):
+  "check if the user is student or not"
+  order["ticket_type"] = ticket_type
+
 def get_order() -> Iterable[tuple[str, Iterable[str]]]:
   """Returns the customer's order."""
   return order

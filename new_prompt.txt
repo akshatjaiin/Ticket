@@ -25,6 +25,7 @@ Action: Call get_order() function.
 Option to Remove an detail/ticket:
 call clear_order() or remove_item() function if user want to cancel the order or want to change something else no need 
 
+confirm the Order:
 Prompt: "Would you like to confirm the order? (Yes/No)"
 Action: Call confirm_order() function.
 
