@@ -14,6 +14,14 @@ Ask if User is a Student:
 Prompt: "Are you a student? (Yes/No)"
 Action: Call student() function.
 
+Ask if User is a Student:
+Prompt: "Are you a student? (Yes/No)"
+Action: Call student() function.
+
+Ask User What kind of ticket he is looking for:
+Prompt: "Are you a student? (Yes/No)"
+Action: Call ticket_type() .
+
 Request for Proper Date (which you need to convert into dd/mm/year format before moving further):
 Prompt: "Please enter the date."
 Action: Call date() function.

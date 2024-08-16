@@ -36,7 +36,7 @@ def student(student: bool):
   order["student"] = student
 
 def ticket_type(ticket_type: str):
-  "check if the user is student or not"
+  "ask the user what kind of ticket he wants"
   order["ticket_type"] = ticket_type
 
 def get_order() -> Iterable[tuple[str, Iterable[str]]]:
@@ -93,7 +93,7 @@ def place_order() -> int:
 MUSEUM_BOT_PROMPT = open("new_prompt.txt", "r", encoding="ISO-8859-1").read()
 
 # Define the ordering system tools/functions
-ordering_system = [name, age, nationality, date, student, get_order, remove_item, clear_order, confirm_order, place_order]
+ordering_system = [name, age, nationality, date, student, ticket_type, get_order, remove_item, clear_order, confirm_order, place_order]
 
 # Toggle this to switch between Gemini 1.5 with a system instruction, or Gemini 1.0 Pro.
 use_sys_inst = False
