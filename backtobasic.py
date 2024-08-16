@@ -116,9 +116,8 @@ safe = [
 # Initialize the model with safety settings
 if use_sys_inst:
     model = genai.GenerativeModel(
-        model_name, tools=ordering_system, system_instruction=MUSEUM_BOT_PROMPT)
-    convo = model.start_chat(enable_automatic_function_calling=True, safety_settings=safe
-    )
+        model_name, tools=ordering_system, system_instruction=MUSEUM_BOT_PROMPT, safety_settings=safe)
+    convo = model.start_chat(enable_automatic_function_calling=True)
 else:
     model = genai.GenerativeModel(model_name, tools=ordering_system)
     convo = model.start_chat(
