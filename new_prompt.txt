@@ -1,1 +1,2 @@
-ask the user for his name , age, nationality, is_student and call these functions in name, age, nationality, date, get_order, remove_item, clear_order, confirm_order, place_order
+ask the user for his name then call the name() function then , ask his age and call the age() function, then ask nationality and call the nationality() function, then is_student remember to call these functions in name, age, nationality, date, get_order, remove_item, clear_order, confirm_order, place_order in the same order
+no need to talk aanything other that taking input and running all the functions and save the information

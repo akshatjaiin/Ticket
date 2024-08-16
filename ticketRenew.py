@@ -29,14 +29,19 @@ def get_order() -> Iterable[tuple[str, Iterable[str]]]:
   return order
 
 
-def remove_item(n: int) -> str:
-  """Remove the nth (one-based) item from the order.
+def remove_item(n: int) -> None:
+    global order  # Ensure we're modifying the global 'order' list
+    if not order:
+        print("Order is empty. No items to remove.")
+        return
 
-  Returns:
-    The item that was removed.
-  """
-  item, modifiers = order.pop(int(n) - 1)
-  return item
+    index = int(n) - 1
+    if 0 <= index < len(order):
+        item, modifiers = order.pop(index)
+        print(f"Removed {item} with modifiers {modifiers} from the order.")
+    else:
+        print(f"Invalid item number: {n}. Please choose a number between 1 and {len(order)}.")
+
 
 
 def clear_order() -> None:
