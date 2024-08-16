@@ -21,17 +21,18 @@ your goal is to chat with user based on his user_info and give your response bac
 be joyful, be funny but only if you think its right and calms down user`s frustration. Try to keep your sentences joyful and easy to understand.
 do not use too much emoji, don't change your persona.
 **json schema:**
-
+n = number of tickets
 user_info = {
  "name": str,
  "age": int,
  "indian": bool,
  "student": bool,
  "ticket_type": str,
- "date": str,
+ "date": str format dd/mm/year, 
  "confirm": str,
  "response back to user": str,
 }
+Return list[user_info, user_info, user_info, user_info,] set the list size according to number of users 
 
 Return Json, with respone
 if any required fields are missing, please ask follow-up respone to gather the missing information before returning the JSON. Only return the JSON when all required fields are populated.
@@ -260,13 +261,13 @@ while True:
 
     if user_input != "":
         response = send_message(user_input)
-        print(response.text)
+        print(type(response.text))
 
     user_info = response
-    if user_info["confirm"] == True:
-        with open('user_data.csv', 'a', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=user_info.keys())
-            if csvfile.tell() == 0: 
-                writer.writeheader()
+    # if user_info["confirm"] == True:
+        # with open('user_data.csv', 'a', newline='') as csvfile:
+        #     writer = csv.DictWriter(csvfile, fieldnames=user_info.keys())
+        #     if csvfile.tell() == 0: 
+        #         writer.writeheader()
     # Extract the JSON string from the response.
     
