@@ -1,4 +1,4 @@
-"""
- pip install google-generativeai
- pip install python-dotenv
-"""
+typing 
+google.api_core
+google.generativeai
+python-dotenv
