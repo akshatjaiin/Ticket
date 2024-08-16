@@ -3,6 +3,7 @@ import csv
 from random import randint
 from typing import Iterable
 
+#A clas to define the functions the bot have 
 class museum_bot:
     def __init__(self):
         self.order = {};
@@ -57,8 +58,6 @@ class museum_bot:
 
         return input('Is this correct? ')
 
-    def get_placed_order(self):
-        return self.placed_order  ;
     def place_order(self) -> int:
         """first enter the users detail in csv
             Returns:
@@ -75,3 +74,4 @@ class museum_bot:
 
         # TODO(you!): Implement ticket fulfilment.
         return randint(1, 10)
+

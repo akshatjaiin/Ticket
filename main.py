@@ -22,10 +22,10 @@ safe = [
 
 
 if __name__=="__main__":
-    # try:
+    try:
         model , museum_bot = configGemini(use_sys_inst, safe );
         # Main loop for user interaction
-        while not museum_bot.get_placed_order():
+        while not museum_bot.placed_order():
             user_input = input('> ')
             response = send_message(user_input,model)
             print(response.text)
@@ -33,5 +33,5 @@ if __name__=="__main__":
         # Here you might want to check if the order is placed and update placed_order accordingly
         # Example: if response indicates order confirmation, you could set placed_order to True
 
-    # except Exception as e:
-    #     print(f"An error occurred: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
