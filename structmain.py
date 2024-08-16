@@ -1,12 +1,11 @@
-#  using gemini cookbook brista bots perspective
 import os
 import csv
+import json
 from random import randint
 from typing import Iterable
 from dotenv import load_dotenv
 from google.api_core import retry
 import google.generativeai as genai
-
 
 # cofiguring model api 
 load_dotenv()
@@ -16,19 +15,24 @@ model = genai.GenerativeModel(
     "gemini-1.5-flash",
 )
 
-MUSEUM_BOT_PROMPT = '''I want you to extract user information from text and return it in a structured format. 
-**JSON Schema:**
-you are alowed to ask me questions untill the json is not null
-USER_INFO = {
-    "name": str, 
-    "age": int,
-    "indian": bool,
-    "student": bool,
-    "ticket_type": str,
-    "date": str
-    "your_question": str,
-} '''
+MUSEUM_BOT_PROMPT = '''i want you to extract user information from text and return it in a structured format.
 
+**json schema:**
+
+user_info = {
+ "name": str,
+ "age": int,
+ "indian": bool,
+ "student": bool,
+ "ticket_type": str,
+ "date": str,
+ "your_response": str,
+}
+
+Return Json, with respone
+if any required fields are missing, please ask follow-up respone to gather the missing information before returning the JSON. Only return the JSON when all required fields are populated.
+
+you can ask me respones until the json is fully populated.'''
 
 
 # Toggle this to switch between Gemini 1.5 with a system instruction, or Gemini 1.0 Pro.
@@ -80,7 +84,23 @@ placed_order = []
 order = {}
 
 # Main loop for user interaction
-while not placed_order:
+while True:
     user_input = input('> ')
+    if user_input.lower() == "quit":
+        break
+
     response = send_message(user_input)
     print(response.text)
+
+    # Extract the JSON string from the response.
+    json_string = response.text.strip() 
+
+    # Convert the JSON string to a dictionary
+    try:
+        user_info = json.loads(json_string)
+    except json.JSONDecodeError:
+        print("Error: Invalid JSON response from Gemini.")
+        continue
+
+    
+    print(user_info)
