@@ -1,4 +1,0 @@
-pip install typing 
-pip install google.api_core
-pip install google.generativeai
-pip install python-dotenv

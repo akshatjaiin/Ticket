@@ -252,12 +252,21 @@ order = {}
 
 # Main loop for user interaction
 while True:
-    user_input = input('> ')
+    user_input = input('> ').strip()
     if user_input.lower() == "quit":
         break
 
-    response = send_message(user_input)
-    print(response.text)
+        
 
+    if user_input != "":
+        response = send_message(user_input)
+        print(response.text)
+
+    user_info = response
+    if user_info["confirm"] == True:
+        with open('user_data.csv', 'a', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=user_info.keys())
+            if csvfile.tell() == 0: 
+                writer.writeheader()
     # Extract the JSON string from the response.
     
