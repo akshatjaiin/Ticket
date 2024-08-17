@@ -1,0 +1,10 @@
+aaahh. i dont think so
+i mean
+the response.text is printing in both the conditions
+and in both its look like they are same and json
+
+https://paste.pythondiscord.com/VHXQ
+
+if i m sending a dict or something like at in first try then my code is crashing
+
+like this https://paste.pythondiscord.com/PARA

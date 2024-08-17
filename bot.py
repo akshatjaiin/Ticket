@@ -280,6 +280,8 @@ while True:
 
     if user_input != "":
         response = send_message(user_input)
+        print(type(response.text))
+        
         print(response.text)
         user_info = json.loads(response.text)
         if user_info[0]["confirm"] == True:
