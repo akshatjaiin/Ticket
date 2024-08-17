@@ -16,16 +16,19 @@
                     <input class="search" type="text" name="q" placeholder="no idea">
                 </form>
                 <div>
-                    <a href="{% url 'index' %}">Home</a>
+                    <a href="{% url 'index' %}">Chat Bot</a>
                 </div>
                 <div>
-                    Chat Bot
+                    Home
                 </div>
                 <div>
                     Help
                 </div>
                 {% block nav %}
                 {% endblock %}
+                <div>
+                    <a href="{% url 'logout' %}">Logout</a>
+                </div>
             </div>
             <div class="main col-lg-10 col-md-9">
                 {% block body %}

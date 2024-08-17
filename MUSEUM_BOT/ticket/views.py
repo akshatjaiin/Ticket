@@ -3,10 +3,11 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from .models import User
 
-from .models import Owner
 
-
+@login_required(login_url='login')
 def index(request):
     return render(request, "ticket/index.html")
 
@@ -14,14 +15,14 @@ def index(request):
 def login_view(request):
     if request.method == "POST":
 
-        # Attempt to sign Owner in
+        # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
-        Owner = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=username, password=password)
 
         # Check if authentication successful
-        if Owner is not None:
-            login(request, Owner)
+        if user is not None:
+            login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "ticket/login.html", {
@@ -49,15 +50,15 @@ def register(request):
                 "message": "Passwords must match."
             })
 
-        # Attempt to create new Owner
+        # Attempt to create new user
         try:
-            Owner = Owner.objects.create_Owner(username, email, password)
-            Owner.save()
+            user = User.objects.create_user(username, email, password)
+            user.save()
         except IntegrityError:
             return render(request, "ticket/register.html", {
                 "message": "username already taken."
             })
-        login(request, Owner)
+        login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "ticket/register.html")
