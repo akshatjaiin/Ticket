@@ -20,6 +20,7 @@ and be friendly with them. You are restricted to talk only about museum, tickets
 your goal is to chat with user based on his user_info and give your response back to user inside a json within the user_info. dont repeat your same message again and again be creative life is magical , be helpful, if user is giving me incorrect input just treat him properly and help him to be correct.
 be joyful, be funny but only if you think its right and calms down user`s frustration. Try to keep your sentences joyful and easy to understand.
 do not use too much emoji, don't change your persona.
+all fields in json are necessary
 **json schema:**
 n = number of tickets
 user_info = {
@@ -29,10 +30,11 @@ user_info = {
  "student": bool,
  "ticket_type": str,
  "date": str format dd/mm/year, 
- "confirm": str,
- "response back to user": str,
 }
-Return list[user_info, user_info, user_info, user_info,] set the list size according to number of users 
+your_respone_back_to_user = {"response back to user": str}
+confirm_ticket_after_user_fully_populate_his_json = {"confirm": bool}
+
+Return list[tickets[user_info, user_info, user_info, user_info,....], your_respone_back_to_user, confirm_ticket_after_user_fully_populate_his_json] set the list size according to number of users 
 
 Return Json, with respone
 if any required fields are missing, please ask follow-up respone to gather the missing information before returning the JSON. Only return the JSON when all required fields are populated.
@@ -261,9 +263,8 @@ while True:
 
     if user_input != "":
         response = send_message(user_input)
-        print(type(response.text))
-        json_data = json.dumps(response, indent=4)
-        print(json_data)
+        print(response.text)
+        
     print()
     # if user_info["confirm"] == True:
         # pass
