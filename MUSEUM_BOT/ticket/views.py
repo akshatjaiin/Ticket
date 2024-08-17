@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import Owner
 
 
 def index(request):
@@ -14,14 +14,14 @@ def index(request):
 def login_view(request):
     if request.method == "POST":
 
-        # Attempt to sign user in
+        # Attempt to sign Owner in
         username = request.POST["username"]
         password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
+        Owner = authenticate(request, username=username, password=password)
 
         # Check if authentication successful
-        if user is not None:
-            login(request, user)
+        if Owner is not None:
+            login(request, Owner)
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "ticket/login.html", {
@@ -49,15 +49,15 @@ def register(request):
                 "message": "Passwords must match."
             })
 
-        # Attempt to create new user
+        # Attempt to create new Owner
         try:
-            user = User.objects.create_user(username, email, password)
-            user.save()
+            Owner = Owner.objects.create_Owner(username, email, password)
+            Owner.save()
         except IntegrityError:
             return render(request, "ticket/register.html", {
-                "message": "Username already taken."
+                "message": "username already taken."
             })
-        login(request, user)
+        login(request, Owner)
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "ticket/register.html")
