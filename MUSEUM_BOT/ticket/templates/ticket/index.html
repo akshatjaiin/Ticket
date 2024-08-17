@@ -1,0 +1,16 @@
+{% extends "ticket/layout.html" %}
+
+{% block title %}
+    Museum Bot
+{% endblock %}
+
+{% block body %}
+    <h1>Chatbot</h1>
+
+    <ul>
+        {% for entry in entries %}
+            <li>{{ entry }}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
