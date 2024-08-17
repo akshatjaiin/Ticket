@@ -281,13 +281,14 @@ while True:
     if user_input != "":
         response = send_message(user_input)
         print(response.text)
+        user_info = json.loads(response.text)
+        if user_info[0]["confirm"] == True:
+            print(user_info[0]["users"])
+            # with open('user_data.csv', 'a', newline='') as csvfile:
+            #     writer = csv.DictWriter(csvfile, fieldnames=user_info.keys())
+            #     if csvfile.tell() == 0: 
+            #         writer.writeheader()
         
-    print()
-    # if user_info["confirm"] == True:
-        # pass
-        # with open('user_data.csv', 'a', newline='') as csvfile:
-        #     writer = csv.DictWriter(csvfile, fieldnames=user_info.keys())
-        #     if csvfile.tell() == 0: 
-        #         writer.writeheader()
-    # Extract the JSON string from the response.
+   
+  
     
