@@ -19,12 +19,8 @@
             </ul>
         </div>
 
-<<<<<<< HEAD
-            <form id="form-chat">
-=======
         <div id="input_div" style="display: flex; align-items: center; justify-content: center;  position: absolute;  width: 100%;">
-            <form action="{% url 'index' %}" method="post">
->>>>>>> d233073cb37ec32eabe2222cbec3f9783ace81e3
+            <form action="{% url 'index' %}" method="POST">
                 {% csrf_token %}
                 <div class="form-group">
                     <input autofocus class="form-control" type="text" name="user_input" placeholder="type something ...">

@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .models import User
+from .models import User, Ticket
 
 import os
 import csv
@@ -313,6 +313,18 @@ def index(request):
         user_input = request.POST["user_input"]
         if user_input.strip() != "":   
             response = send_message(user_input)
+            response_json = json.loads(response.text)
+            if response_json[0]["confirm"] == True:
+                for i in response_json[0]["users"]:
+                    name = i['user_info']['name']
+                    age = i['user_info']['age']
+                    indian = i['user_info']['indian']
+                    student = i['user_info']['student']
+                    ticket_type = i['user_info']['ticket_type']
+                    date = i['user_info']['date']
+                    paid = False     
+                    ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = date, paid = paid)
+                    ticket.save()
             return render(request, "ticket/index.html", {
                     "user_input": user_input,
                     "response": response.text,
