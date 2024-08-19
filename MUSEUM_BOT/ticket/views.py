@@ -307,6 +307,14 @@ def send_message(message):
 
 @login_required(login_url='login')
 def index(request):
+    if request.method == "POST":
+
+        # Attempt to sign user in
+        user_input = request.POST["user_input"]
+        return render(request, "ticket/index.html", {
+                "user_input": user_input,
+            })
+
     return render(request, "ticket/index.html")
 
 
