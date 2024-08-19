@@ -11,14 +11,13 @@
         <div class="main" style="height: 80%;" id="main">
         </div>
 
-        <div id="input_div" style="display: flex; align-items: center; justify-content: center;  position: absolute;  width: 100%;">
             <form id="form-chat">
                 {% csrf_token %}
                 <div class="form-group">
                     <input autofocus class="form-control" type="text" name="user_input" placeholder="type something ...">
+                    <input class="btn btn-primary" type="submit" value="Submit">
                 </div>
             </form>
-        </div>
     </div>
     
 
