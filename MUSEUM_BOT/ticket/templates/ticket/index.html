@@ -8,10 +8,23 @@
 
     <div class="chatwindow" style="position: relative; height: 100vh;">
                
-        <div class="main" style="height: 80%;" id="main">
+        <div class="main" style="height: 80%;">
+            <ul>
+                <li>
+                     <div class="user_input">{{user_input}}</div>
+                </li>
+                <li>
+                    <div class="response">{{response}}</div>
+               </li>
+            </ul>
         </div>
 
+<<<<<<< HEAD
             <form id="form-chat">
+=======
+        <div id="input_div" style="display: flex; align-items: center; justify-content: center;  position: absolute;  width: 100%;">
+            <form action="{% url 'index' %}" method="post">
+>>>>>>> d233073cb37ec32eabe2222cbec3f9783ace81e3
                 {% csrf_token %}
                 <div class="form-group">
                     <input autofocus class="form-control" type="text" name="user_input" placeholder="type something ...">

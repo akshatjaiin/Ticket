@@ -1,3 +1,7 @@
 
 .env
+<<<<<<< HEAD
 db.sqlite3
+/MUSEUM_BOT/ticket/__pycache__
+=======
+>>>>>>> parent of 0d75ed3 (adding js to intract with ai)
