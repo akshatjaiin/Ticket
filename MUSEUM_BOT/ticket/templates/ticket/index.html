@@ -17,7 +17,14 @@
     </div>
     
     <div class="main">
-        <div class="user_input">{{user_input}}</div>
+        <ul>
+            <li>
+                 <div class="user_input">{{user_input}}</div>
+            </li>
+            <li>
+                <div class="response">{{response}}</div>
+           </li>
+        </ul>
     </div>
     <ul>
         {% for message in chat_history %}
