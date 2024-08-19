@@ -5,11 +5,10 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Chatbot</h1>
 
-    <div class="chatwindow" style="position: absolute;">
+    <div class="chatwindow" style="position: relative; height: 100vh;">
                
-        <div class="main">
+        <div class="main" style="height: 80%;">
             <ul>
                 <li>
                      <div class="user_input">{{user_input}}</div>
@@ -20,7 +19,7 @@
             </ul>
         </div>
 
-        <div id="input_div" style="display: flex; align-items: center; justify-content: center;  position: absolute; top: 70vh;">
+        <div id="input_div" style="display: flex; align-items: center; justify-content: center;  position: absolute;  width: 100%;">
             <form action="{% url 'index' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
