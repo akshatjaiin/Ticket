@@ -14,6 +14,7 @@ from typing import Iterable
 from dotenv import load_dotenv
 from google.api_core import retry
 import google.generativeai as genai
+from django.http import JsonResponse
 
 # cofiguring model api 
 load_dotenv()
@@ -313,10 +314,11 @@ def index(request):
         user_input = request.POST["user_input"]
         if user_input.strip() != "":   
             response = send_message(user_input)
-            return render(request, "ticket/index.html", {
+            resData = {
                     "user_input": user_input,
                     "response": response.text,
-                })
+                };
+            return JsonResponse(resData); 
 
     return render(request, "ticket/index.html")
 
