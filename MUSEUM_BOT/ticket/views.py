@@ -311,12 +311,11 @@ def index(request):
 
         # Attempt to sign user in
         user_input = request.POST["user_input"]
-
         if user_input.strip() != "":   
             response = send_message(user_input)
             return render(request, "ticket/index.html", {
                     "user_input": user_input,
-                    "response": response,
+                    "response": response.text,
                 })
 
     return render(request, "ticket/index.html")
