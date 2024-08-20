@@ -42,16 +42,16 @@ form.addEventListener("submit", (e) => {
       for (user = 0; user < response.users.length; user++) {
         const userInfo = response.users[user].user_info;
         ticketViewer.parentElement.classList
-        ticketViewer.innerHTML += ` 
-<div className="ticket">
-<h1>Ticket ${user + 1}</h1>
-<p>Name: ${userInfo.name}</p> 
-<p>Age: ${userInfo.age}</p> 
-<p>Indian: ${userInfo.indian}</p>
-<p>Student: ${userInfo.student}</p>
-<p>Ticket_type: ${userInfo.ticket_type}</p>
-<p>Date: ${userInfo.day}-${userInfo.month}-${userInfo.year} </p>
-</div>`
+              ticketViewer.innerHTML += ` 
+      <div className="ticket">
+      <h1>Ticket ${user + 1}</h1>
+      <p>Name: ${userInfo.name}</p> 
+      <p>Age: ${userInfo.age}</p> 
+      <p>Indian: ${userInfo.indian}</p>
+      <p>Student: ${userInfo.student}</p>
+      <p>Ticket_type: ${userInfo.ticket_type}</p>
+      <p>Date: ${userInfo.day}-${userInfo.month}-${userInfo.year} </p>
+      </div>`
 
         ticketViewer.parentElement.classList.remove("disappear");
         console.log();
