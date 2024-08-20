@@ -391,3 +391,6 @@ def register(request):
     else:
         return render(request, "ticket/register.html")
 
+
+def about_museum(request):
+    return render(request, "ticket/about_museum.html")
