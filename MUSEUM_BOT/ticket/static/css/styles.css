@@ -88,6 +88,7 @@ html {
   border: none;
   border-radius: 0.3rem;
   background: #2ed13f;
+  padding: 5px;
 }
 
 .form-group>input {
@@ -118,4 +119,8 @@ input[type="text"]:focus-within {
 
 .sidenavbar>ul>li:not(li:last-child):hover {
   box-shadow: 2px 2px 4px #8a8a8a88, inset 2px 2px 4px #8a8a8a88;
+}
+
+.sidenavbar>ul>li:not(li:last-child):hover>a {
+  color: white;
 }
