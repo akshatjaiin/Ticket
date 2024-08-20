@@ -325,9 +325,9 @@ def index(request):
                     day = i['user_info']['day']
                     month = i['user_info']['month']
                     year = i['user_info']['year']
-                    date = date(year, month, day) 
+                    book_date = date(year, month, day) 
                     paid = False     
-                    ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = date, paid = paid)
+                    ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = book_date, owner = request.user, paid = paid)
                     ticket.save()
 
             resData = {
