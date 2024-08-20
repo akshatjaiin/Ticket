@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -325,10 +325,12 @@ def index(request):
                     paid = False     
                     ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = date, paid = paid)
                     ticket.save()
-            return render(request, "ticket/index.html", {
+
+            resData = {
                     "user_input": user_input,
                     "response": response.text,
-                })
+                };
+            return  JsonResponse(resData);
 
     return render(request, "ticket/index.html")
 
