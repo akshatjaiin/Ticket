@@ -6,9 +6,19 @@
 
 {% block body %}
                
-        <div id="main" class="wchat" style="height: 80%;">         </div>
+    <div class="chatwindow">
+        <div id="main" class="chat-section" >
+            <!-- <ul> -->
+            <!--     <li> -->
+            <!--          <div class="user_input">{{user_input}}</div> -->
+            <!--     </li> -->
+            <!--     <li> -->
+            <!--         <div class="response">{{response}}</div> -->
+            <!--    </li> -->
+            <!-- </ul> -->
+        </div>
 
-        <div id="input_div">
+        <div id="input_div" >
             <form id="form-chat" action="{% url 'index' %}" method="POST">
                 {% csrf_token %}
                 <div class="form-group">
