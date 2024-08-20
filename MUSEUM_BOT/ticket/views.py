@@ -310,12 +310,10 @@ def send_message(message):
 @login_required(login_url='login')
 def index(request):
     if request.method == "POST":
-
         # Attempt to sign user in
         user_input = request.POST["user_input"]
         if user_input.strip() != "":   
             response = send_message(user_input)
-            response = se
             response_json = json.loads(response.text)
             if response_json[0]["confirm"] == True:
                 for i in response_json[0]["users"]:
@@ -324,7 +322,7 @@ def index(request):
                     indian = i['user_info']['indian']
                     student = i['user_info']['student']
                     ticket_type = i['user_info']['ticket_type']
-                    confirm = i['user_info']['confirm']
+                    confirm = True
                     day = i['user_info']['day']
                     month = i['user_info']['month']
                     year = i['user_info']['year']
