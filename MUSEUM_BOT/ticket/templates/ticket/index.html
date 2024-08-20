@@ -8,19 +8,19 @@
 
     <div class="chatwindow" style="position: relative; height: 100vh;">
                
-        <div class="main" style="height: 80%;">
-            <ul>
-                <li>
-                     <div class="user_input">{{user_input}}</div>
-                </li>
-                <li>
-                    <div class="response">{{response}}</div>
-               </li>
-            </ul>
+        <div id="main" class="main" style="height: 80%;">
+            <!-- <ul> -->
+            <!--     <li> -->
+            <!--          <div class="user_input">{{user_input}}</div> -->
+            <!--     </li> -->
+            <!--     <li> -->
+            <!--         <div class="response">{{response}}</div> -->
+            <!--    </li> -->
+            <!-- </ul> -->
         </div>
 
         <div id="input_div" style="display: flex; align-items: center; justify-content: center;  position: absolute;  width: 100%;">
-            <form action="{% url 'index' %}" method="POST">
+            <form id="form-chat" action="{% url 'index' %}" method="POST">
                 {% csrf_token %}
                 <div class="form-group">
                     <input autofocus class="form-control" type="text" name="user_input" placeholder="type something ...">
