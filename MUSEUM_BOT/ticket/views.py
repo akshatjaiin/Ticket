@@ -127,7 +127,7 @@ Here are some helpful tips for responding to user requests:
  If the user asks for directions, provide a link to Google Maps.
  If the user asks for information beyond booking tickets, politely inform them that your focus is on booking tickets.
  and beaware while calculating total of ticket price you may make mistakes.
- 
+
 
 Example Conversation:
 
@@ -162,7 +162,7 @@ Although a small museum was opened in the year 1881, within the premises, it was
 
 Image Gallery of Albert Hall Museum Jaipur, India
 Click to enlarge image albert-hall-museum-jaipur-tourism-entry-fee.jpgClick to enlarge image albert-hall-museum-jaipur-tourism-entry-ticket-price.jpgClick to enlarge image albert-hall-museum-jaipur-tourism-history.jpgClick to enlarge image albert-hall-museum-jaipur-tourism-holidays-closed-on-timings.jpgClick to enlarge image albert-hall-museum-jaipur-tourism-location-address.jpgClick to enlarge image albert-hall-museum-jaipur-tourism-opening-time-closing.jpg
- 
+
 Architecture of Albert Hall Museum, Jaipur
 “To provide meaningful architecture is not to parody history, but to articulate it.”- Daniel Libeskind
 
@@ -277,16 +277,16 @@ def send_message(message):
     """Send a message to the conversation and return the response."""
     return convo.send_message(message)
 
-# Main loop for user interaction
-# while True:
+    # Main loop for user interaction
+    # while True:
     user_input = input('> ').strip()
     if user_input.lower() == "quit":
         pass
-        
+
 
     if user_input != "":
         response = send_message(user_input)
-        
+
         response_json = json.loads(response.text)
         print(response_json[0]["your_response_back_to_user"])
 
@@ -299,9 +299,9 @@ def send_message(message):
             #     writer = csv.DictWriter(csvfile, fieldnames=user_info.keys())
             #     if csvfile.tell() == 0: 
             #         writer.writeheader()
-        
-   
-     
+
+
+
 
 
 
@@ -309,7 +309,6 @@ def send_message(message):
 @login_required(login_url='login')
 def index(request):
     if request.method == "POST":
-
         # Attempt to sign user in
         user_input = request.POST["user_input"]
         if user_input.strip() != "":   
@@ -329,11 +328,10 @@ def index(request):
                     paid = False     
                     ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = book_date, owner = request.user, paid = paid)
                     ticket.save()
-
-            resData = {
-                    "user_input": user_input,
-                    "response": response.text,
-                };
+            resData={
+                "user_input": user_input,
+                "response": response.text,
+            };
             return  JsonResponse(resData);
 
     return render(request, "ticket/index.html")
