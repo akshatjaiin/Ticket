@@ -12,26 +12,29 @@
 </head>
 <body>
     <div class="row">
-        <div class="sidenavbar">
+        <div class="leftside">
             <h1>Museum</h1>
-            <ul>
-                <li><div><a href="{% url 'index' %}">Chat Bot</a></div></li>
-                <li><div><a href="{% url 'index' %}">About</a></div></li>
-                <li><div><a href="{% url 'index' %}">Location</a></div></li>
-                <li><div><a href="{% url 'index' %}">Booked Ticket</a></div></li>
-                <li><div><a href="{% url 'index' %}">Query</a></div></li>
-                <li><div><a href="{% url 'index' %}">Meuseum</a></div></li>
-                <li><div><a href="{% url 'index' %}">Meuseum</a></div></li>
-                <li>{% block nav %}{% endblock %}</li>
-            </ul>
-        
-            <select name="setting" id="setting">
-                <option value="setting">setting</option>
-                <option value="language">Language</option>
-                <option value="support">Support</option>
-                <option value="logout">logout</option>
-            </select>             
+            <div class="sidenavbar">
+                <ul class="routelist">
+                    <li><div><a href="{% url 'index' %}">Chat Bot</a></div></li>
+                    <li><div><a href="{% url 'index' %}">About</a></div></li>
+                    <li><div><a href="{% url 'index' %}">Location</a></div></li>
+                    <li><div><a href="{% url 'index' %}">Booked Ticket</a></div></li>
+                    <li><div><a href="{% url 'index' %}">Query</a></div></li>
+                    <li><div><a href="{% url 'index' %}">Meuseum</a></div></li>
+                    <li><div><a href="{% url 'index' %}">Meuseum</a></div></li>
+                    {% block nav %}{% endblock %}
+                </ul>
+            
+                <select name="setting" id="setting">
+                    <option value="setting">setting</option>
+                    <option value="language">Language</option>
+                    <option value="support">Support</option>
+                    <option value="logout">logout</option>
+                </select>             
+            </div>
         </div>
+        
         
         <div class="main">
             {% block body %}
