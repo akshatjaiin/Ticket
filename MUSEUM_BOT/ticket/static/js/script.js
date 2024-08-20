@@ -10,11 +10,6 @@ form.addEventListener("submit", (e) => {
     body: formData
   };
   const chatFetch = async (url, options) => {
-    // nencesery data for auto scroll 
-    const scrollTop = main.scrollTop;
-    const clientHeight = main.clientHeight;
-    const scrollHeight = main.scrollHeight;
-
     // a div where prompt and res gonna store 
     const chatDiv = document.createElement('div');
     chatDiv.classList.add("chat-div");
@@ -48,13 +43,6 @@ form.addEventListener("submit", (e) => {
        <p name="response">${response}</p>
      </div>
      `
-
-    // cehck the user scroll pos and scroll down
-    if (scrollTop + clientHeight <= scrollHeight) {
-      console.log("down")
-      const latestChatDiv = main.lastChild;
-      main.scrollTop = latestChatDiv.offsetTop;
-    }
 
     return;
   }
