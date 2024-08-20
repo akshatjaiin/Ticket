@@ -76,11 +76,46 @@ html {
 .form-group {
   display: flex;
   gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .form-group>button {
+  aspect-ratio: 1/1;
   display: flex;
   justify-content: center;
   align-items: center;
   border: none;
+  border-radius: 0.3rem;
+  background: #2ed13f;
+}
+
+.form-group>input {
+  padding: 0.3rem 1rem;
+  border-radius: 0.33rem;
+}
+
+input[type="text"]:focus-within {
+  outline: none;
+}
+
+.sidenavbar>ul {
+  margin: 0px;
+  padding: 0px;
+  list-style-type: none;
+}
+
+.sidenavbar>ul>li {
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 6px;
+}
+
+.sidenavbar>ul>li>a {
+  text-decoration: none;
+  color: var(--clr-text);
+}
+
+.sidenavbar>ul>li:not(li:last-child):hover {
+  box-shadow: 2px 2px 4px #8a8a8a88, inset 2px 2px 4px #8a8a8a88;
 }
