@@ -12,15 +12,19 @@
     <body class=" mx-0 my-0 px-0 py-0">
         <div class="row">
             <div class="sidebar col-lg-2 col-md-3 ">
-                <h2>Bot</h2>
-                <form>
-                    <input class="search" type="text" name="q" placeholder="no idea">
-                </form>
+                <h2>Museum</h2>
+            
                 <div>
                     <a href="{% url 'index' %}">Chat Bot</a>
                 </div>
                 <div>
-                    Home
+                    About
+                </div>
+                <div>
+                    Location
+                </div>
+                <div>
+                    Booked Ticket
                 </div>
                 <div>
                     Help
@@ -30,7 +34,9 @@
                 <div>
                     <a href="{% url 'logout' %}">Logout</a>
                 </div>
+                
             </div>
+            
             <div class="main col-lg-10 col-md-9">
                 {% block body %}
                 {% endblock %}

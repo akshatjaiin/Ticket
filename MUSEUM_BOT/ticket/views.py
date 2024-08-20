@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import User, Ticket
-
+from datetime import date
 import os
 import csv
 import json
@@ -41,8 +41,9 @@ user_info = {
  "student": bool,
  //always return lowercase true or false because you are returning a json
  "ticket_type": str,
- "date": str format 
- // date should be in the json you response dd/mm/year, 
+ "day": int,
+ "month": int,
+ "year": int, 
 }
 // all details in the json are necessary.
 
@@ -321,7 +322,10 @@ def index(request):
                     indian = i['user_info']['indian']
                     student = i['user_info']['student']
                     ticket_type = i['user_info']['ticket_type']
-                    date = i['user_info']['date']
+                    day = i['user_info']['day']
+                    month = i['user_info']['month']
+                    year = i['user_info']['year']
+                    date = date(year, month, day) 
                     paid = False     
                     ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = date, paid = paid)
                     ticket.save()

@@ -8,7 +8,7 @@ class User(AbstractUser):
 # Ticket
 class Ticket(models.Model):
     name = models.CharField(max_length=30)
-    date = models.CharField(max_length=30)
+    date = models.DateField()
     ticket_type = models.CharField(max_length=300)
     student = models.BooleanField(default=True)
     indian = models.BooleanField(default=True)
