@@ -1,0 +1,7 @@
+"GET /ticket/ HTTP/1.1" 200 6468
+[21/Aug/2024 09:05:28] "GET /ticket/ HTTP/1.1" 200 6468
+[21/Aug/2024 09:08:17] "GET /ticket/?csrfmiddlewaretoken=WpbWRbLWjunstBSsQCL2lD95KD0BxiVSkepA3E3XtUIdZmFiMIFAvfj9AsYZCh2t&user_input=hi HTTP/1.1" 200 6468
+[21/Aug/2024 09:08:18,437] - Broken pipe from ('127.0.0.1', 64952)
+[21/Aug/2024 09:08:50] "GET /ticket/?csrfmiddlewaretoken=aLeEPtCluRqHgr9Zf1OXh73BTwqedHVDyAsi1WUmEhLsMcWPb7IvrJdFJloCiG2e&user_input=hi HTTP/1.1" 200 6468
+[21/Aug/2024 09:08:51] "GET /ticket/?csrfmiddlewaretoken=yLXfp9rIYpuVmH036cUiK657DPm4UgODWAbTBCJJ8PPGSsNT2iOQUIfbtEksZfVe&user_input= HTTP/1.1" 200 6468
+[21/Aug/2024 09:08:52,345] - Broken pipe from ('127.0.0.1', 64954)
