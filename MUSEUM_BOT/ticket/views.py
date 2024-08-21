@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Ticket
 from datetime import date
 from django.contrib.sessions.models import Session
+from django.shortcuts import get_object_or_404
 import os
 import csv
 import json
@@ -330,25 +331,29 @@ def index(request):
                     paid = False     
                     ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = book_date, owner = request.user, paid = paid)
                     ticket.save()
-
-
+                    return JsonResponse({"ticket_id": ticket.id})
             resData = {
                     "user_input": user_input,
                     "response": response.text,
                 };
             return  JsonResponse(resData);
-
     return render(request, "ticket/index.html")
 
-def ticket(request):
+@login_required(login_url='login')
+def ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    year = ticket.date.year
+    month = ticket.date.month
+    day = ticket.date.day
     return render(request, "ticket/ticket.html", {
         "name": ticket.name,
         "age": ticket.age,
         "indian": ticket.indian,
         "student": ticket.student,
-        "day": ticket.day,
-        "month": ticket.month,
-        "year": ticket.year,
+        "ticket_id": ticket.id,
+        "day": day,
+        "month": month,
+        "year": year,
         "ticket_type": ticket.ticket_type,
     })
 
