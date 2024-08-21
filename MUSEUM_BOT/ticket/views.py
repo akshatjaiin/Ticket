@@ -332,7 +332,7 @@ def index(request):
             resData = {}
 
             # If the response confirms ticket booking
-            if response_json[0].get("confirm"):
+            if response_json[0]["confirm"] == True:
                 ticket_ids = []
                 for user_data in response_json[0]["users"]:
                     name = user_data['user_info']['name']
@@ -373,7 +373,7 @@ def index(request):
             return JsonResponse(resData)
 
     # Render the initial page with the introductory message
-    return render(request, "ticket/index.html", {'first': response_json})
+    return render(request, "ticket/index.html",)
 
 @login_required(login_url='login')
 def ticket(request, ticket_id):
