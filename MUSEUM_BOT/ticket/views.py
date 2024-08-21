@@ -320,6 +320,7 @@ def index(request):
         if user_input.strip() != "":   
             response = send_message(user_input)
             response_json = json.loads(response.text)
+            resData = {}
             if response_json[0]["confirm"] == True:
                 ticket_id = []
                 for i in response_json[0]["users"]:
@@ -336,6 +337,7 @@ def index(request):
                     ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = book_date, owner = request.user, paid = paid)
                     ticket.save()
                     ticket_id.append(ticket.id)
+                resData['confirm']=True;
                 resData['ticket_id']=ticket_id;
             resData.update({
                     "user_input": user_input,

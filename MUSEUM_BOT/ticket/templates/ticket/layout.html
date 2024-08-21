@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="hi">
-<head>
+  <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
 
@@ -15,39 +15,44 @@
 <body>
     <div id="google_translate_element"></div>
     <div id="root" class="row">
-        <div id="tickets-div" class="tickets-div disappear">
-            <div id="tickets"></div>
-        </div>
-        <div class="sidenavbar">
-            <h1>Museum</h1>
-            <ul>
-                <li><a href="{% url 'index' %}">Chat Bot</a></li>
-                <li><a href="{% url 'index' %}">About</a></li>
-                <li><a href="{% url 'index' %}">Location</a></li>
-                <li><a href="{% url 'index' %}">Booked Ticket</a></li>
-                <li><a href="{% url 'index' %}">Query</a></li>
-                <li><a href="{% url 'about_museum' %}">About Museum</a></li>
-                <li>{% block nav %}{% endblock %}</li>
-            </ul>
-
+      <div id="setting-div" class="setting-div disappear">
+        <div>
+          <div>
+            <svg fill="#fff" height="1rem" width="1rem" version="1.1" id="close-setting" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 490 490" xml:space="preserve">
+              <polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490   489.292,457.678 277.331,245.004 489.292,32.337 "/>
+            </svg>
+          </div>
+          <div id="settings">
+            <label for="language">Language</label>
             <select name="language" id="language">
-                <!-- Options will be populated by JavaScript -->
             </select>
-
-            <select name="setting" id="setting">
-                <option value="setting">Setting</option>
-                <option value="language">Language</option>
-                <option value="support">Support</option>
-                <option value="logout">Logout</option>
-            </select>
+            <a>Support</a>
+            <a class="logout">Logout</a>
+          </div>
         </div>
+      </div>
+      <div class="sidenavbar">
+        <h1>Museum</h1>
+        <ul>
+          <li><a href="{% url 'index' %}">Chat Bot</a></li>
+          <li><a href="{% url 'index' %}">About</a></li>
+          <li><a href="{% url 'index' %}">Location</a></li>
+          <li><a href="{% url 'index' %}">Booked Ticket</a></li>
+          <li><a href="{% url 'index' %}">Query</a></li>
+          <li><a href="{% url 'about_museum' %}">About Museum</a></li>
+          <li>{% block nav %}{% endblock %}</li>
+        </ul>
 
-        <div class="chat-container">
-            {% block body %}
-            {% endblock %}
-        </div>
+        <!-- Options will be populated by JavaScript -->
+        <button id="setting-btn">setting</button>
+      </div>
+
+      <div class="chat-container">
+        {% block body %}
+        {% endblock %}
+      </div>
     </div>
     <script src="{% static 'js/script.js' %}"></script>
     <script src="{% static 'js/language.js' %}"></script>
-</body>
+  </body>
 </html>
