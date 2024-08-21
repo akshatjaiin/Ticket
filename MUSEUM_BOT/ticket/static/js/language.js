@@ -85,22 +85,11 @@ function googleTranslateElementInit() {
     includedLanguages: 'ar,bn,bg,zh-CN,zh-TW,hr,cs,da,nl,et,fa,fi,fr,de,gu,el,hi,hu,it,ja,ko,kn,lv,lt,ml,mr,no,pl,pt,ro,ru,sr,sk,sl,es,sw,su,ta,te,th,tr,uk,ur,vi',
     layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
   }, 'google_translate_element');
-  // let isLoaded = document.getElementById(":2.container") != null;
-  // const intervalId = setInterval(() => {
-  //   isLoaded = document.getElementById(":2.container") != null;
-  //   console.log("hello")
-  //   if (isLoaded) {
-  //     document.getElementById(":2.container").parentElement.innerHTML = "";
-  //     document.body.style = "";
-  //     languSelector();
-  //     clearInterval(intervalId);
-  //   }
-  // }, 100);
+
 
   setTimeout(() => {
     document.getElementById(":2.container").parentElement.innerHTML = "";
     document.body.style = "";
-    // languSelector();
   }, 1000);
 
 }
