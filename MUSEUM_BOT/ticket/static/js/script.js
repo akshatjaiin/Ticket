@@ -39,11 +39,12 @@ form.addEventListener("submit", (e) => {
     const response = JSON.parse(res.response)[0];
     if (response.confirm) {
       console.log(response.users)
+      const ticketDiv = document.createElement('div');
+      ticketDiv.classList.add("tickets-div")
       for (user = 0; user < response.users.length; user++) {
         const userInfo = response.users[user].user_info;
-        ticketViewer.parentElement.classList
-              ticketViewer.innerHTML += ` 
-      <div className="ticket">
+        ticketDiv.innerHTML += ` 
+          <div className = "ticket" >
       <h1>Ticket ${user + 1}</h1>
       <p>Name: ${userInfo.name}</p> 
       <p>Age: ${userInfo.age}</p> 
@@ -51,23 +52,24 @@ form.addEventListener("submit", (e) => {
       <p>Student: ${userInfo.student}</p>
       <p>Ticket_type: ${userInfo.ticket_type}</p>
       <p>Date: ${userInfo.day}-${userInfo.month}-${userInfo.year} </p>
-      </div>`
+      </div > `
 
-        ticketViewer.parentElement.classList.remove("disappear");
-        console.log();
+        // ticketViewer.parentElement.classList.remove("disappear");
       }
+      chatDiv.appendChild(ticketDiv);
+      chatDiv.innerHTML += '<button class="pay-btn">Pay now</button>'
       return;
     }
 
 
 
     // append the user res to the html
-    chatDiv.innerHTML += ` 
-<div class="chat response">
+    chatDiv.innerHTML += `
+    <div class="chat response" >
 <label for="response"> Bot </label>
 <p name="response">${response.your_response_back_to_user}</p>
-</div>
-`
+</div >
+    `
 
     return;
   }

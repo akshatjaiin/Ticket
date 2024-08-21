@@ -1,4 +1,5 @@
 **/__pycache__/
 .env
-/MUSEUM_BOT/db.sqlite3
-/MUSEUM_BOT/ticket/__pycache__
+**/db.sqlite3
+
+

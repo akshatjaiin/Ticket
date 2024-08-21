@@ -127,16 +127,6 @@ input[type="text"]:focus-within {
 }
 
 
-.tickets-div {
-  position: absolute;
-  height: 100vh;
-  width: 100vw;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .disappear {
   position: absolute;
@@ -144,12 +134,27 @@ input[type="text"]:focus-within {
   transform: scale(0);
 }
 
-#tickets {
-  height: 60vh;
-  aspect-ratio: 1/1;
-  background: var(--clr-bg);
-  border-radius: 1rem;
-  padding: 1rem;
-  overflow-y: scroll;
-  overflow-x: hidden;
+/* .tickets { */
+/*   height: 60vh; */
+/*   aspect-ratio: 1/1; */
+/*   background: var(--clr-bg); */
+/*   border-radius: 1rem; */
+/*   padding: 1rem; */
+/*   overflow-y: scroll; */
+/*   overflow-x: hidden; */
+/* } */
+
+.pay-btn {}
+
+.tickets-div {
+  counter-increment: ticket;
+}
+
+.ticket:before {
+  display: block;
+  text-align: center;
+  content: counter(ticket);
+  line-height: 200px;
+  font-size: 80px;
+  color: white;
 }
