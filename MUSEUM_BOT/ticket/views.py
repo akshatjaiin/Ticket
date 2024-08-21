@@ -333,7 +333,7 @@ def index(request):
                     ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = book_date, owner = request.user, paid = paid)
                     ticket.save()
                     ticket_id.append(ticket.id)
-                return JsonResponse({"ticket_id": ticket_id})
+                return JsonResponse({"confirm": True, "ticket_id": ticket_id})
             resData = {
                     "user_input": user_input,
                     "response": response.text,
