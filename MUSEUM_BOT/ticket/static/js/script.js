@@ -23,7 +23,7 @@ form.addEventListener("submit", (e) => {
     method: "POST",
     body: formData
   };
-  
+
   const chatFetch = async (url, options) => {
     // a div where prompt and res gonna store 
     const chatDiv = document.createElement('div');
