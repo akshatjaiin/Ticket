@@ -311,10 +311,6 @@ def send_message(message):
 
 @login_required(login_url='login')
 def index(request):
-    # Initial introduction message sent in the user's preferred language
-    response = send_message(f"Hi, myself {request.user}. I may or may not want to book a ticket, but I want to know about you. My preferred language is {request.user.language}. Please use my preferred language and give an energetic intro.")
-    response_json = json.loads(response.text)
-
     if request.method == "POST":
         # Handle form submission
         user_input = request.POST.get("user_input")
@@ -371,9 +367,14 @@ def index(request):
 
             # Return JSON response
             return JsonResponse(resData)
+        else:
+            print("log")
+            # Initial introduction message sent in the user's preferred language
+            response = send_message(f"Hi, myself {request.user}. I may or may not want to book a ticket, but I want to know about you. My preferred language is {request.user.language}. Please use my preferred language and give an energetic intro. only use my prefred language pleaase")
+            response_json = json.loads(response.text)
 
     # Render the initial page with the introductory message
-    return render(request, "ticket/index.html",)
+    return render(request, "ticket/index.html")
 
 @login_required(login_url='login')
 def ticket(request, ticket_id):
