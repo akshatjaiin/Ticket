@@ -44,24 +44,15 @@ form.addEventListener("submit", (e) => {
     // send the prompt to the backend 
     let res = await fetch(url, options);
     res = await res.json();
-    console.log(res);
-
-
-    // parse the stringify output of ai 
-    const response = JSON.parse(res.response)[0];
-    if (response.confirm) {
-      console.log(response.users)
-      const ticketDiv = document.createElement('div');
-      ticketDiv.classList.add("tickets-div")
-        const ticket_id = response.users[user].user_info;
-        ticketDiv.innerHTML += fetchTicket(123);
-      }
+    if (res.confirm) {
+      const ticket_id = res.ticket_id;
+      chatDiv.innerHTML += fetchTicket(ticket_id);
       chatDiv.appendChild(ticketDiv);
       chatDiv.innerHTML += '<button class="pay-btn">Pay now</button>'
       return;
     }
-
-
+    // parse the stringify output of ai 
+    const response = JSON.parse(res.response)[0];
 
     // append the user res to the html
     chatDiv.innerHTML += `
