@@ -314,7 +314,6 @@ def index(request):
         user_input = request.POST["user_input"]
         if user_input.strip() != "":   
             response = send_message(user_input)
-            print(response.text)
             response_json = json.loads(response.text)
             if response_json[0]["confirm"] == True:
                 for i in response_json[0]["users"]:
@@ -391,3 +390,6 @@ def register(request):
     else:
         return render(request, "ticket/register.html")
 
+
+def about_museum(request):
+    return render(request, "ticket/about_museum.html")
