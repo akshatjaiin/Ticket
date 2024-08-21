@@ -318,6 +318,7 @@ def index(request):
             response = send_message(user_input)
             response_json = json.loads(response.text)
             if response_json[0]["confirm"] == True:
+                ticket_id = []
                 for i in response_json[0]["users"]:
                     name = i['user_info']['name']
                     age = i['user_info']['age']
@@ -331,7 +332,8 @@ def index(request):
                     paid = False     
                     ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = book_date, owner = request.user, paid = paid)
                     ticket.save()
-                return JsonResponse({"confirm":True,"ticket_id": ticket.id})
+                    ticket_id.append(ticket.id)
+                return JsonResponse({"ticket_id": ticket_id})
             resData = {
                     "user_input": user_input,
                     "response": response.text,
