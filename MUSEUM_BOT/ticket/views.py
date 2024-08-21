@@ -331,6 +331,7 @@ def index(request):
                     ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = book_date, owner = request.user, paid = paid)
                     ticket.save()
 
+
             resData = {
                     "user_input": user_input,
                     "response": response.text,
@@ -339,6 +340,17 @@ def index(request):
 
     return render(request, "ticket/index.html")
 
+def ticket(request):
+    return render(request, "ticket/ticket.html", {
+        "name": ticket.name,
+        "age": ticket.age,
+        "indian": ticket.indian,
+        "student": ticket.student,
+        "day": ticket.day,
+        "month": ticket.month,
+        "year": ticket.year,
+        "ticket_type": ticket.ticket_type,
+    })
 
 def login_view(request):
     if request.method == "POST":
@@ -394,3 +406,5 @@ def register(request):
 
 def about_museum(request):
     return render(request, "ticket/about_museum.html")
+
+
