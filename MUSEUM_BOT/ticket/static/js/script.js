@@ -46,8 +46,9 @@ form.addEventListener("submit", (e) => {
     res = await res.json();
     if (res.confirm) {
       const ticket_id = res.ticket_id;
-      chatDiv.innerHTML += fetchTicket(ticket_id);
-      chatDiv.appendChild(ticketDiv);
+      for(tickets of ticket_id){
+        chatDiv.innerHTML += fetchTicket(ticket_id);
+      }
       chatDiv.innerHTML += '<button class="pay-btn">Pay now</button>'
       return;
     }
