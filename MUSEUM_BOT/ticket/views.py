@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import User, Ticket
 from datetime import date
+from django.contrib.sessions.models import Session
 import os
 import csv
 import json

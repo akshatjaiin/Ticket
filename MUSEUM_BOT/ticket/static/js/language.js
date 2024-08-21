@@ -1,53 +1,58 @@
-// JavaScript dictionary of languages
-const LANGUAGES = {
-  'en': 'English',
-  'ja': 'Japanese',
-  'ko': 'Korean',
-  'ar': 'Arabic',
-  'id': 'Bahasa Indonesia',
-  'bn': 'Bengali',
-  'bg': 'Bulgarian',
-  'zh-hans': 'Chinese (Simplified)',
-  'zh-hant': 'Chinese (Traditional)',
-  'hr': 'Croatian',
-  'cs': 'Czech',
-  'da': 'Danish',
-  'nl': 'Dutch',
-  'et': 'Estonian',
-  'fa': 'Farsi',
-  'fi': 'Finnish',
-  'fr': 'French',
-  'de': 'German',
-  'gu': 'Gujarati',
-  'el': 'Greek',
-  'hi': 'Hindi',
-  'hu': 'Hungarian',
-  'it': 'Italian',
-  'kn': 'Kannada',
-  'lv': 'Latvian',
-  'lt': 'Lithuanian',
-  'ml': 'Malayalam',
-  'mr': 'Marathi',
-  'no': 'Norwegian',
-  'pl': 'Polish',
-  'pt': 'Portuguese',
-  'ro': 'Romanian',
-  'ru': 'Russian',
-  'sr': 'Serbian',
-  'sk': 'Slovak',
-  'sl': 'Slovenian',
-  'es': 'Spanish',
-  'sw': 'Swahili',
-  'ta': 'Tamil',
-  'te': 'Telugu',
-  'th': 'Thai',
-  'tr': 'Turkish',
-  'uk': 'Ukrainian',
-  'ur': 'Urdu',
-  'vi': 'Vietnamese'
-};
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+      pageLanguage: 'hi',
+      includedLanguages: 'ar,bn,bg,zh-CN,zh-TW,hr,cs,da,nl,et,fa,fi,fr,de,gu,el,hi,hu,it,ja,ko,kn,lv,lt,ml,mr,no,pl,pt,ro,ru,sr,sk,sl,es,sw,su,ta,te,th,tr,uk,ur,vi',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+}
 
 // Populate the select element with language options
+const LANGUAGES = {
+  'ar': 'العربية',
+  'bn': 'বাংলা',
+  'bg': 'български',
+  'zh-CN': '中文 (简体)',
+  'zh-TW': '中文 (繁體)',
+  'hr': 'hrvatski',
+  'cs': 'čeština',
+  'da': 'dansk',
+  'nl': 'Nederlands',
+  'et': 'eesti',
+  'fa': 'فارسی',
+  'fi': 'suomi',
+  'fr': 'français',
+  'de': 'Deutsch',
+  'gu': 'ગુજરાતી',
+  'el': 'ελληνικά',
+  'hi': 'हिन्दी',
+  'hu': 'magyar',
+  'it': 'italiano',
+  'ja': '日本語',
+  'kn': 'ಕನ್ನಡ',
+  'ko': '한국어',
+  'lv': 'latviešu',
+  'lt': 'lietuvių',
+  'ml': 'മലയാളം',
+  'mr': 'मराठी',
+  'no': 'norsk',
+  'pl': 'polski',
+  'pt': 'português',
+  'ro': 'română',
+  'ru': 'русский',
+  'sr': 'српски',
+  'sk': 'slovenčina',
+  'sl': 'slovenščina',
+  'es': 'español',
+  'sw': 'Kiswahili',
+  'ta': 'தமிழ்',
+  'te': 'తెలుగు',
+  'th': 'ไทย',
+  'tr': 'Türkçe',
+  'uk': 'українська',
+  'ur': 'اردو',
+  'vi': 'Tiếng Việt'
+};
+
 const select = document.getElementById('language');
 for (const [code, name] of Object.entries(LANGUAGES)) {
   const option = document.createElement('option');
@@ -57,53 +62,11 @@ for (const [code, name] of Object.entries(LANGUAGES)) {
 }
 
 // Function to change the page language
-// function changeLanguage() {
-//   const selectedLang = select.value;
-//   if (google.translate) {
-//     const frame = document.querySelector('iframe.goog-te-frame');
-//     if (frame) {
-//       const doc = frame.contentDocument || frame.contentWindow.document;
-//       doc.documentElement.lang = selectedLang;
-//       google.translate.TranslateElement.getInstance().setEnabledLanguage(selectedLang);
-//     }
-//   } else {
-//     document.documentElement.lang = selectedLang;
-//     window.location.reload();
-//   }
-// }
-
-// Google Translate initialization
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'ar',
-    includedLanguages: 'ar,bn,bg,zh-CN,zh-TW,hr,cs,da,nl,et,fa,fi,fr,de,gu,el,hi,hu,it,ja,ko,kn,lv,lt,ml,mr,no,pl,pt,ro,ru,sr,sk,sl,es,sw,su,ta,te,th,tr,uk,ur,vi',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-    autoDisplay: false
-  }, 'google_translate_element');
+function changeLanguage() {
+  const selectedLang = select.value;
+  const translateElement = new google.translate.TranslateElement();
+  translateElement.setEnabledLanguages([selectedLang]);
+  translateElement.translate();
 }
 
-const root = document.getElementById("root");
-function googleTranslateElementInit() {
-  function translateThediv() {
-    const content = root.innerHTML;
-    const output = new google.translate.TranslateElement({
-      pageLanguage: 'en',
-      includedLanguages: 'ar,bn,bg,zh-CN,zh-TW,hr,cs,da,nl,et,fa,fi,fr,de,gu,el,hi,hu,it,ja,ko,kn,lv,lt,ml,mr,no,pl,pt,ro,ru,sr,sk,sl,es,sw,su,ta,te,th,tr,uk,ur,vi',
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-      autoDisplay: false
-    }, 'google_translate_element');
-    output.lang = "ko";
-    const translatedContent = output.translate(content);
-    console.log(translatedContent, content)
-    root.innerHTML = translatedContent;
-  }
-  translateThediv();
-}
-
-// Load Google Translate script
-// (function () {
-//   const script = document.createElement('script');
-//   script.type = 'text/javascript';
-//   script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-//   document.body.appendChild(script);
-// })();
+select.addEventListener('change', changeLanguage);
