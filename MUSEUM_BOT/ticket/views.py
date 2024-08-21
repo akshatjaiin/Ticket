@@ -311,6 +311,9 @@ def send_message(message):
 
 @login_required(login_url='login')
 def index(request):
+    resData = {
+        "confirm":False 
+    };
     if request.method == "POST":
         # Attempt to sign user in
         user_input = request.POST["user_input"]
@@ -333,11 +336,11 @@ def index(request):
                     ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = book_date, owner = request.user, paid = paid)
                     ticket.save()
                     ticket_id.append(ticket.id)
-                return JsonResponse({"confirm": True, "ticket_id": ticket_id})
-            resData = {
+                resData['ticket_id']=ticket_id;
+            resData.update({
                     "user_input": user_input,
                     "response": response.text,
-                };
+                });
             return  JsonResponse(resData);
     return render(request, "ticket/index.html")
 
@@ -347,6 +350,7 @@ def ticket(request, ticket_id):
     year = ticket.date.year
     month = ticket.date.month
     day = ticket.date.day
+
     return render(request, "ticket/ticket.html", {
         "name": ticket.name,
         "age": ticket.age,
