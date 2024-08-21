@@ -3,6 +3,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator 
 
 class User(AbstractUser):
+    language = models.CharField(default='english', max_length=30)
     pass
 
 # Ticket

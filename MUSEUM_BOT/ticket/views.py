@@ -311,40 +311,69 @@ def send_message(message):
 
 @login_required(login_url='login')
 def index(request):
-    resData = {
-        "confirm":False 
-    };
+    # Initial introduction message sent in the user's preferred language
+    response = send_message(f"Hi, myself {request.user}. I may or may not want to book a ticket, but I want to know about you. My preferred language is {request.user.language}. Please use my preferred language and give an energetic intro.")
+    response_json = json.loads(response.text)
+
     if request.method == "POST":
-        # Attempt to sign user in
-        user_input = request.POST["user_input"]
-        if user_input.strip() != "":   
+        # Handle form submission
+        user_input = request.POST.get("user_input")
+        language = request.POST.get("language")
+
+        # Update user's preferred language if provided
+        if language:
+            request.user.language = language
+            request.user.save()
+
+        # Process user input
+        if user_input and user_input.strip() != "":
             response = send_message(user_input)
             response_json = json.loads(response.text)
             resData = {}
-            if response_json[0]["confirm"] == True:
-                ticket_id = []
-                for i in response_json[0]["users"]:
-                    name = i['user_info']['name']
-                    age = i['user_info']['age']
-                    indian = i['user_info']['indian']
-                    student = i['user_info']['student']
-                    ticket_type = i['user_info']['ticket_type']
-                    day = i['user_info']['day']
-                    month = i['user_info']['month']
-                    year = i['user_info']['year']
-                    book_date = date(year, month, day) 
-                    paid = False     
-                    ticket = Ticket(name = name, age = age, indian = indian, student = student, ticket_type = ticket_type, date = book_date, owner = request.user, paid = paid)
+
+            # If the response confirms ticket booking
+            if response_json[0].get("confirm"):
+                ticket_ids = []
+                for user_data in response_json[0]["users"]:
+                    name = user_data['user_info']['name']
+                    age = user_data['user_info']['age']
+                    indian = user_data['user_info']['indian']
+                    student = user_data['user_info']['student']
+                    ticket_type = user_data['user_info']['ticket_type']
+                    day = user_data['user_info']['day']
+                    month = user_data['user_info']['month']
+                    year = user_data['user_info']['year']
+                    book_date = date(year, month, day)
+                    paid = False
+
+                    # Create and save the ticket
+                    ticket = Ticket(
+                        name=name,
+                        age=age,
+                        indian=indian,
+                        student=student,
+                        ticket_type=ticket_type,
+                        date=book_date,
+                        owner=request.user,
+                        paid=paid
+                    )
                     ticket.save()
-                    ticket_id.append(ticket.id)
-                resData['confirm']=True;
-                resData['ticket_id']=ticket_id;
+                    ticket_ids.append(ticket.id)
+
+                resData['confirm'] = True
+                resData['ticket_id'] = ticket_ids
+
+            # Add user input and response to the response data
             resData.update({
-                    "user_input": user_input,
-                    "response": response.text,
-                });
-            return  JsonResponse(resData);
-    return render(request, "ticket/index.html")
+                "user_input": user_input,
+                "response": response.text,
+            })
+
+            # Return JSON response
+            return JsonResponse(resData)
+
+    # Render the initial page with the introductory message
+    return render(request, "ticket/index.html", {'first': response_json})
 
 @login_required(login_url='login')
 def ticket(request, ticket_id):

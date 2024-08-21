@@ -24,8 +24,10 @@
           </div>
           <div id="settings">
             <label for="language">Language</label>
-            <select name="language" id="language">
-            </select>
+            <form action="{% url 'index' %}" method="POST">
+              {% csrf_token %}
+              <select name="language" id="language"> </select>
+              <input type="submit">            </form>
             <a>Support</a>
             <a class="logout">Logout</a>
           </div>
