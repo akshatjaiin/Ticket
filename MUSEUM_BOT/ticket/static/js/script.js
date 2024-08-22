@@ -142,6 +142,7 @@ async function fetchTicket(ticketId) {
 
 function chat(e) {
   e.preventDefault(); // so that the page not reload multiple time on chat
+  if (!form[1].value) return;
   const formData = new FormData(form);
   const url = "/ticket/";
   const options = {
