@@ -43,6 +43,35 @@ else:
         enable_automatic_function_calling=True
     )
 
+
+import json
+def normalize_json_structure(data):
+    # If the input is a string, try to load it as JSON
+    if isinstance(data, str):
+        try:
+            parsed_data = json.loads(data)
+        except json.JSONDecodeError:
+            raise ValueError("Invalid JSON format")
+    else:
+        # If data is already a list or dictionary, use it as-is
+        parsed_data = data
+
+    # Unwrap nested single-item lists
+    while isinstance(parsed_data, list) and len(parsed_data) == 1:
+        parsed_data = parsed_data[0]
+
+    # If the final structure is a dictionary, wrap it in a list
+    if isinstance(parsed_data, dict):
+        return [parsed_data]
+
+    # If the final structure is a list of dictionaries, return as-is
+    if isinstance(parsed_data, list) and all(isinstance(item, dict) for item in parsed_data):
+        return parsed_data
+
+    # If it doesn't match any known structure, raise an error
+    raise ValueError("Unknown JSON structure")
+
+
 # a func to chat with ai :)
 @retry.Retry(initial=30)
 def send_message(message)->None:
@@ -72,6 +101,8 @@ def index(request):
             while invalidjson:
                 try:
                     response_json = json.loads(response.text)
+                    response_json = normalize_json_structure(response_json)
+                    print(f"normalized json: {response_json} ")
                     invalidjson = False
                 except json.JSONDecodeError as e:
                     print(f"JSON decoding faled: {e}")
@@ -140,17 +171,21 @@ def index(request):
                 }
 
                 # Identify the first field with a value of None
-                age = None
                 first_none_field = next((field for field, value in fields.items() if value is None), None)
                 
                 if first_none_field is not None:
                     print(f"you forget to ask {first_none_field}")
-                    response = send_message(f"you forget to ask {first_none_field}, and you cant book ticket without it, ask again no matter how i deny.")
+                    response = send_message(f"Message from system: 'ask {first_none_field}, and you cant book ticket without it, ask again no matter how user deny.'")
                     response_json = json.loads(response.text)
-                    print(response.text)
+                    response_json = normalize_json_structure(response_json)
+                    print(response_json)
+
                     resData.update({
-                    "response": response_json,
+                        "status":200,
+                        "user_input": user_input,
+                        "response": response_json[0],
                     })
+                    # Return JSON response
                     return JsonResponse(resData)
                 print("saving ticket...  ")
                 # Create and save the ticket
@@ -175,22 +210,23 @@ def index(request):
             resData.update({
                 "status":200,
                 "user_input": user_input,
-                "response": response.text,
+                "response": response_json[0],
             })
             # Return JSON response
             return JsonResponse(resData)
 
     else:
         # Initial introduction message sent in the user's preferred language
-        response = send_message(f'''Hi, myself {request.user}. I dont want to book a ticket,
+        response = send_message(f'''[Hi, myself {request.user}. I dont want to book a ticket,
                                  I just want to know about you. My preferred language is {request.user.language}. 
                                  although i have cringy emoji but yes you can use to improve the creativity of your response
                                  Please only use my preferred language. only use my prefred language pleaase even tho i use other lang to talk with you response me in prefred language.
                                 i hate when someone ask me more than one details at a response. i just wanna know what you can do, in a concise way.
                                 i might become nasty and give you same prompt again and again, 
-                                just remaind me if i did that and use different reminders each time''')
+                                just remaind me if i did that and use different reminders each time]''')
         print(f"ai first response: {response.text}")
         response_json = json.loads(response.text)
+        response_json = normalize_json_structure(response_json)
         # Render the initial page with the introductory message
         return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")})
     return render(request, "ticket/index.html",{"firstResponse":"Bot is Down "})
@@ -284,4 +320,3 @@ def register(request):
 
 def about_museum(request):
     return render(request, "ticket/about_museum.html")
-
