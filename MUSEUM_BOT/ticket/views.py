@@ -84,20 +84,39 @@ def index(request):
                     book_date = date(year, month, day)
                     paid = False
 
-                    # Create and save the ticket
-                    ticket = Ticket(
-                        name=name,
-                        age=age,
-                        indian=indian,
-                        student=student,
-                        ticket_type=ticket_type,
-                        date=book_date,
-                        owner=request.user,
-                        paid=paid
-                    )
-                    ticket.save()
-                    # this is to send the user the price of the ticket acd to there id 
-                    ticketDetails[ticket.id]=ticket.total_cost 
+                fields = {
+                'name': name,
+                'age': age,
+                'indian': indian,
+                'student': student,
+                'ticket_type': ticket_type,
+                'day': day,
+                'month': month,
+                    'year': year
+                }
+
+                # Identify the first field with a value of None
+                first_none_field = next((field for field, value in fields.items() if value is None), None)
+
+                if first_none_field is None:
+                    response = send_message(f"you forget to ask {first_none_field}")
+                    response_json = json.loads(response.text)
+                    return JsonResponse(resData)
+
+                # Create and save the ticket
+                ticket = Ticket(
+                    name=name,
+                    age=age,
+                    indian=indian,
+                    student=student,
+                    ticket_type=ticket_type,
+                    date=book_date,
+                    owner=request.user,
+                    paid=paid
+                )
+                ticket.save()
+                # this is to send the user the price of the ticket acd to there id 
+                ticketDetails[ticket.id]=ticket.total_cost 
 
                 resData['confirm'] = True
                 resData['ticketDetails'] = ticketDetails
