@@ -101,7 +101,10 @@ def index(request):
             while invalidjson:
                 try:
                     response_json = json.loads(response.text)
+                    print(type(response_json))
                     response_json = normalize_json_structure(response_json)
+                   
+                    print(type(response_json))
                     print(f"normalized json: {response_json} ")
                     invalidjson = False
                 except json.JSONDecodeError as e:
@@ -183,7 +186,7 @@ def index(request):
                     resData.update({
                         "status":200,
                         "user_input": user_input,
-                        "response": response_json[0],
+                        "response": response_json,
                     })
                     # Return JSON response
                     return JsonResponse(resData)
@@ -210,7 +213,7 @@ def index(request):
             resData.update({
                 "status":200,
                 "user_input": user_input,
-                "response": response_json[0],
+                "response": response_json,
             })
             # Return JSON response
             return JsonResponse(resData)
