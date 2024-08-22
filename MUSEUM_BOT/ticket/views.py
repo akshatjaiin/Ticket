@@ -22,7 +22,7 @@ from . import constants;
 
 # cofiguring model api 
 load_dotenv()
-genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+genai.configure(api_key='AIzaSyAnnn0J4u1tQ7WIZcUtAZn9IPVyf-WpTzg')
 
 # Select the model name based on the toggle
 model_name = 'gemini-1.5-flash'
