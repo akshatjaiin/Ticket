@@ -17,7 +17,6 @@ from .models import User, Ticket # models to save in db
 from google.api_core import retry
 import google.generativeai as genai
 
-
 # cofiguring model api 
 load_dotenv()
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
@@ -53,6 +52,7 @@ def send_message(message)->None:
 # the main chating page
 @login_required(login_url='login')
 def index(request):
+    print(f"language: {request.user.language}")
     if request.method == "POST":
         language = request.POST.get("language")
         if language:
@@ -66,7 +66,9 @@ def index(request):
         # Process user input
         if user_input and user_input.strip(): 
             response = send_message(user_input)
+            print(response.text)
             response_json = json.loads(response.text)
+            
             resData = {}
 
             # If the response confirms ticket booking
@@ -103,7 +105,7 @@ def index(request):
                     response_json = json.loads(response.text)
                     resData.update({
                     "response": response.text,
-                })
+                    })
                     return JsonResponse(resData)
 
                 # Create and save the ticket
@@ -133,18 +135,19 @@ def index(request):
             # Return JSON response
             return JsonResponse(resData)
 
-    elif request.method == "GET":
+    else:
         # Initial introduction message sent in the user's preferred language
         response = send_message(f'''Hi, myself {request.user}. I dont want to book a ticket,
                                  I just want to know about you. My preferred language is {request.user.language}. 
                                  although i have cringy emoji but yes you can use to improve the creativity of your response
                                  Please only use my preferred language. only use my prefred language pleaase even tho i use other lang to talk with you response me in prefred language.
-                                i hate when someone ask me more than one details at a response. i just wanna know what you can do, in a concise way''')
+                                i hate when someone ask me more than one details at a response. i just wanna know what you can do, in a concise way.
+                                i might become nasty and give you same prompt again and again, 
+                                just remaind me if i did that and use different reminders each time''')
         response_json = json.loads(response.text)
         # Render the initial page with the introductory message
         return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")})
-    else:
-        return "Method Not Supported"
+
 
 
 # creating a ticket url for every ticket so that user can acess those
