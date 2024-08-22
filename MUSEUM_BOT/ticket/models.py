@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator 
 
+# user model 
 class User(AbstractUser):
     language = models.CharField(default='english', max_length=30)
     pass
@@ -50,7 +51,7 @@ class Ticket(models.Model):
             return 0
 
         # Free entry for children below 7 years
-        if self.age is not None and self.age < 7:
+        if not self.age and self.age < 7:
             return 0
 
         # Determine the visitor category
@@ -64,8 +65,7 @@ class Ticket(models.Model):
             category = 'Foreign Tourist'
 
         # Calculate the total cost based on ticket type
-        total_cost = prices.get(self.ticket_type, {}).get(category, 0)
-        
+        total_cost = prices.get(self.ticket_type, {}).get(category,0)
         return total_cost
     
     def save(self, *args, **kwargs):
