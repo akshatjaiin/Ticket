@@ -19,7 +19,7 @@ class Ticket(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)  # Automatically set the field to now when the object is first created.
     age = models.IntegerField(validators=[MinValueValidator(6), MaxValueValidator(122)], null=True)
-    total_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_cost = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)], null=True, blank=True)
 
     def total(self):
         # Ticket prices

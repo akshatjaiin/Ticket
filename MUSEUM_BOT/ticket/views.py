@@ -135,7 +135,11 @@ def index(request):
 
     elif request.method == "GET":
         # Initial introduction message sent in the user's preferred language
-        response = send_message(f"Hi, myself {request.user}. I may or may not want to book a ticket, but I want to know about you. My preferred language is {request.user.language}. Please use my preferred language and give an energetic intro. only use my prefred language pleaase even tho i use other lang to talk with u res in prefred language.")
+        response = send_message(f'''Hi, myself {request.user}. I dont want to book a ticket,
+                                 I just want to know about you. My preferred language is {request.user.language}. 
+                                 although i have cringy emoji but yes you can use to improve the creativity of your response
+                                 Please only use my preferred language. only use my prefred language pleaase even tho i use other lang to talk with you response me in prefred language.
+                                i hate when someone ask me more than one details at a response. i just wanna know what you can do, in a concise way''')
         response_json = json.loads(response.text)
         # Render the initial page with the introductory message
         return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")})
