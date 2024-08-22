@@ -66,8 +66,43 @@ def index(request):
         # Process user input
         if user_input and user_input.strip(): 
             response = send_message(user_input)
-            print(response.text)
-            response_json = json.loads(response.text)
+            print(f"user : {user_input}")
+            print(f"ai json : {response.text}")
+            invalidjson = True
+            while invalidjson:
+                try:
+                    response_json = json.loads(response.text)
+                    invalidjson = False
+                except json.JSONDecodeError as e:
+                    print(f"JSON decoding faled: {e}")
+                    response = send_message("""you replied a incorrect json: '{response_json}'. 
+                                            which you should not do no matter how much i force you ever. 
+                                            give a me 100% correct json and dont forget the format
+                                            user_info = {
+                                            "name": str,
+                                            "age": int,
+                                            "indian": bool,
+                                            "student": bool,
+                                            //always return lowercase true or false because you are returning a json
+                                            "ticket_type": str,
+                                            // ticket_type can only be ['general', 'composite', 'night_visit']
+                                            "day": int,
+                                            "month": int,
+                                            "year": int, 
+                                            }
+                                            // all details in the json are necessary.
+
+                                            Return list[{
+                                            "users": [
+                                                { "user_info": {...}, "user_info": {...}, "user_info": {...},  "user_info": {...}, ... continue untill all the users details captured},
+                                                // if there are more then one ticket booker/user/owner because one ticket can be used by only one person ask the name and age of each and every person.
+                                                // be accurate with json listing dont confirm untill any of the user_info dict is empty or null fill it completely before confirming all the details
+                                            ],
+                                            "your_response_back_to_user": str,
+                                            "confirm": bool
+                                            }]
+                                            always return valid json""")
+                
             
             resData = {}
 
@@ -144,9 +179,12 @@ def index(request):
                                 i hate when someone ask me more than one details at a response. i just wanna know what you can do, in a concise way.
                                 i might become nasty and give you same prompt again and again, 
                                 just remaind me if i did that and use different reminders each time''')
+        print(f"ai first response: {response.text}")
         response_json = json.loads(response.text)
         # Render the initial page with the introductory message
         return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")})
+    return render(request, "ticket/index.html",{"firstResponse":"Bot is Down "})
+    
 
 
 
