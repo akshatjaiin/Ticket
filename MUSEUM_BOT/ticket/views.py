@@ -22,6 +22,7 @@ from . import constants;
 
 # cofiguring model api 
 load_dotenv()
+print(os.getenv('GEMINI_API_KEY'));
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 
 # Select the model name based on the toggle
