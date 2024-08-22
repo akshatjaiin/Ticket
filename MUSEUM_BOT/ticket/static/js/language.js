@@ -54,43 +54,38 @@ for (const [code, name] of Object.entries(LANGUAGES)) {
   select.appendChild(option);
 }
 
-// Function to change the page language
+// Function to change the language of specific elements
 function changeLanguage() {
   const selectedLang = select.value;
-  const translateElement = new google.translate.TranslateElement();
-  translateElement.setEnabledLanguages([selectedLang]);
-  translateElement.translate();
+  const translatableElements = document.querySelectorAll('.translatable');
+
+  translatableElements.forEach(element => {
+    const originalText = element.dataset.originalText || element.textContent;
+    element.dataset.originalText = originalText; // Store original text for future reference
+    // Here you would typically call a translation API, but for demonstration, we'll just simulate it
+    fetchTranslation(originalText, selectedLang).then(translatedText => {
+      element.textContent = translatedText;
+    });
+  });
+}
+
+// Simulated translation function (replace with actual API call)
+function fetchTranslation(text, lang) {
+  // This is a mock function. Replace with actual API call to Google Translate or any translation service.
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(`Translated [${text}] to ${lang}`); // Simulated response
+    }, 500);
+  });
 }
 
 select.addEventListener('change', changeLanguage);
 
-const languSelector = () => {
-  // Populate the select element with language options
-  console.log("hi")
-  const select = document.getElementById('language');
-  document.getElementsByClassName("VIpgJd-ZVi9od-xl07Ob-lTBxed")[0].click();
-  document.getElementsByClassName("VIpgJd-ZVi9od-vH1Gmf-ibnC6b-gk6SMd")[0].click();
-  for (tags of document.getElementsByClassName("VIpgJd-ZVi9od-vH1Gmf-ibnC6b")) {
-    console.log(tags);
-    const option = document.createElement('option');
-    option.value = tags.value;
-    option.textContent = LANGUAGES[tags.value];
-    option.onclick = () => tags.click()
-    select.appendChild(option);
-  }
-}
-// Google Translate initialization
+// Google Translate initialization (if needed)
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({
     pageLanguage: 'en',
     includedLanguages: 'ar,bn,bg,zh-CN,zh-TW,hr,cs,da,nl,et,fa,fi,fr,de,gu,el,hi,hu,it,ja,ko,kn,lv,lt,ml,mr,no,pl,pt,ro,ru,sr,sk,sl,es,sw,su,ta,te,th,tr,uk,ur,vi',
     layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
   }, 'google_translate_element');
-
-
-  setTimeout(() => {
-    document.getElementById(":2.container").parentElement.innerHTML = "";
-    document.body.style = "";
-  }, 1000);
-
 }
