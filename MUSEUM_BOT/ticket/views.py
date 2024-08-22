@@ -8,22 +8,18 @@ from django.contrib.auth.decorators import login_required
 from datetime import date
 from django.contrib.sessions.models import Session
 from django.shortcuts import get_object_or_404
-# models to save in db 
-from .models import User, Ticket
-# some needed modules
+# import
 import os
 import json
+from . import constants # some constants which we are using
 from dotenv import load_dotenv
-# modeules to load ai 
+from .models import User, Ticket # models to save in db 
 from google.api_core import retry
 import google.generativeai as genai
-# some constants which we are using
-from . import constants;
+
 
 # cofiguring model api 
 load_dotenv()
-
-print(os.getenv('GEMINI_API_KEY'));
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 
 # Select the model name based on the toggle
@@ -69,13 +65,13 @@ def index(request):
 
         # Process user input
         if user_input and user_input.strip(): 
-            response = send_message(user_input);
-            response_json = json.loads(response.text);
+            response = send_message(user_input)
+            response_json = json.loads(response.text)
             resData = {}
 
             # If the response confirms ticket booking
             if response_json[0]["confirm"] == True:
-                ticketDetails = {};
+                ticketDetails = {}
                 for user_data in response_json[0]["users"]:
                     name = user_data['user_info']['name']
                     age = user_data['user_info']['age']
@@ -101,10 +97,10 @@ def index(request):
                     )
                     ticket.save()
                     # this is to send the user the price of the ticket acd to there id 
-                    ticketDetails[ticket.id]=ticket.total_cost; 
+                    ticketDetails[ticket.id]=ticket.total_cost 
 
                 resData['confirm'] = True
-                resData['ticketDetails'] = ticketDetails;
+                resData['ticketDetails'] = ticketDetails
 
             # Add user input and response to the response data
             resData.update({
@@ -120,11 +116,12 @@ def index(request):
         response = send_message(f"Hi, myself {request.user}. I may or may not want to book a ticket, but I want to know about you. My preferred language is {request.user.language}. Please use my preferred language and give an energetic intro. only use my prefred language pleaase even tho i use other lang to talk with u res in prefred language.")
         response_json = json.loads(response.text)
         # Render the initial page with the introductory message
-        return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")});
+        return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")})
     else:
-        return "Method Not Supported";
+        return "Method Not Supported"
 
-# creating a ticket url for every ticket so that user can acess those;
+
+# creating a ticket url for every ticket so that user can acess those
 @login_required(login_url='login')
 def ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
@@ -144,17 +141,19 @@ def ticket(request, ticket_id):
         "ticket_type": ticket.ticket_type,
     })
 
+
 @login_required(login_url='login')
 def makepaymentsuccess(request):
     if request.method == "POST":
         tickets = request.POST["tickets"]
         for ticket_id in tickets:
-            ticket = Ticket.objects.get(id=ticket_id);
-            ticket.paid = True;
-            ticket.save();
+            ticket = Ticket.objects.get(id=ticket_id)
+            ticket.paid = True
+            ticket.save()
         return JsonResponse({"status":200, "debug":Ticket.objects.get(id=tickets[0]).paid})
     else:
-        return render(request,"tickets/methodnotsupported.html");
+        return render(request,"tickets/methodnotsupported.html")
+    return render(request,"tickets/methodnotsupported.html")
 
 def login_view(request):
     if request.method == "POST":
@@ -162,9 +161,8 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
-
         # Check if authentication successful
-        if not user:
+        if user is not None:
             login(request, user) # login the user
             return HttpResponseRedirect(reverse("index"))
         else:
@@ -172,12 +170,8 @@ def login_view(request):
                 "message": "Invalid username and/or password."
             })
 
-    elif request.method == "GET":
-        return render(request, "ticket/login.html")
-    else:
-        # for other request like DELET or PUT etc 
-        return render(request,"tickets/methodnotsupported.html");
-
+    return render(request, "ticket/login.html")
+    
 
 def logout_view(request):
     logout(request)
@@ -209,17 +203,8 @@ def register(request):
         # make user login
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
-    elif request.method == "GET":
-        return render(request, "ticket/register.html")
-    else:
-        # for other request like DELET or PUT etc 
-        return render(request,"tickets/methodnotsupported.html");
-
+    return render(request, "ticket/register.html")
 
 def about_museum(request):
-    if request.method == "GET":
-        return render(request, "ticket/about_museum.html")
-    else:
-        # for other request like DELET or PUT etc 
-        return render(request,"tickets/methodnotsupported.html");
+    return render(request, "ticket/about_museum.html")
 
