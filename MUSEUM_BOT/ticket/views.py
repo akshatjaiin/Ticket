@@ -56,16 +56,14 @@ def send_message(message)->None:
 @login_required(login_url='login')
 def index(request):
     if request.method == "POST":
-        print(request.POST);
-
-        # Handle form submission
-        user_input = request.POST.get("user_input")
         language = request.POST.get("language")
-
-        # Update user's preferred language if provided
         if language:
+            # Update user's preferred language if provided
             request.user.language = language
             request.user.save()
+            return HttpResponseRedirect(reverse("index"))
+        # Handle form submission
+        user_input = request.POST.get("user_input")
 
         # Process user input
         if user_input and user_input.strip(): 
@@ -108,6 +106,7 @@ def index(request):
 
             # Add user input and response to the response data
             resData.update({
+                "status":200,
                 "user_input": user_input,
                 "response": response.text,
             })
@@ -116,10 +115,10 @@ def index(request):
 
     elif request.method == "GET":
         # Initial introduction message sent in the user's preferred language
-        response = send_message(f"Hi, myself {request.user}. I may or may not want to book a ticket, but I want to know about you. My preferred language is {request.user.language}. Please use my preferred language and give an energetic intro. only use my prefred language pleaase")
+        response = send_message(f"Hi, myself {request.user}. I may or may not want to book a ticket, but I want to know about you. My preferred language is {request.user.language}. Please use my preferred language and give an energetic intro. only use my prefred language pleaase even tho i use other lang to talk with u res in prefred language.")
         response_json = json.loads(response.text)
         # Render the initial page with the introductory message
-        return render(request, "ticket/index.html")
+        return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")});
     else:
         return "Method Not Supported";
 
