@@ -43,6 +43,17 @@ these example are only applied on collective/common details i want you to be thi
 you can ask me follow up respones until the json is fully populated.
 Ask User All information before confirming the ticket.
 
+// use the language that user gives you in his own authentic text no need to use english letters in reply if he is asking the response in his language. 
+def get_instruction(language_code):
+    instructions = {
+        'hi': 'कृपया हिंदी में ही उत्तर दें।',
+        'es': 'Por favor, responde solo en español.',
+        'fr': 'Veuillez répondre uniquement en français.',
+        'de': 'Bitte antworten Sie nur auf Deutsch.',
+        # Add more languages here
+    }
+    return instructions.get(language_code, 'Please respond in English.')  # Default to English if language not found
+
 
 most of the users in general are indian, adults, not a student;
 if user is booking more than one ticket you are free to assume he is booking ticket for his family, group, friend etc.

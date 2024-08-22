@@ -101,7 +101,12 @@ def index(request):
                                             "your_response_back_to_user": str,
                                             "confirm": bool
                                             }]
-                                            always return valid json""")
+                                            always return valid json
+                                            always return the json inside the list as i told you.
+                                            strictly follow those rules.
+                                            and dont forget i want letters in my prefred language.
+                                            i m forgiving you this time now go to my second last prompt and continue the conversion"""
+                                            )
                 
             
             resData = {}
@@ -120,6 +125,8 @@ def index(request):
                     year = user_data['user_info']['year']
                     book_date = date(year, month, day)
                     paid = False
+
+                    
                 age = None
                 fields = {
                 'name': name,
@@ -133,16 +140,19 @@ def index(request):
                 }
 
                 # Identify the first field with a value of None
+                age = None
                 first_none_field = next((field for field, value in fields.items() if value is None), None)
                 
-                if first_none_field is None:
-                    response = send_message(f"you forget to ask {first_none_field}")
+                if first_none_field is not None:
+                    print(f"you forget to ask {first_none_field}")
+                    response = send_message(f"you forget to ask {first_none_field}, and you cant book ticket without it, ask again no matter how i deny.")
                     response_json = json.loads(response.text)
+                    print(response.text)
                     resData.update({
-                    "response": response.text,
+                    "response": response_json,
                     })
                     return JsonResponse(resData)
-
+                print("saving ticket...  ")
                 # Create and save the ticket
                 ticket = Ticket(
                     name=name,
