@@ -144,6 +144,18 @@ def ticket(request, ticket_id):
         "ticket_type": ticket.ticket_type,
     })
 
+@login_required(login_url='login')
+def makepaymentsuccess(request):
+    if request.method == "POST":
+        tickets = request.POST["tickets"]
+        for ticket_id in tickets:
+            ticket = Ticket.objects.get(id=ticket_id);
+            ticket.paid = True;
+            ticket.save();
+        return JsonResponse({"status":200, "debug":Ticket.objects.get(id=tickets[0]).paid})
+    else:
+        return render(request,"tickets/methodnotsupported.html");
+
 def login_view(request):
     if request.method == "POST":
         # Attempt to sign user in
@@ -164,7 +176,7 @@ def login_view(request):
         return render(request, "ticket/login.html")
     else:
         # for other request like DELET or PUT etc 
-        return "Method Not Supported";
+        return render(request,"tickets/methodnotsupported.html");
 
 
 def logout_view(request):
@@ -201,7 +213,7 @@ def register(request):
         return render(request, "ticket/register.html")
     else:
         # for other request like DELET or PUT etc 
-        return "Method Not Supported";
+        return render(request,"tickets/methodnotsupported.html");
 
 
 def about_museum(request):
@@ -209,5 +221,5 @@ def about_museum(request):
         return render(request, "ticket/about_museum.html")
     else:
         # for other request like DELET or PUT etc 
-        return "Method Not Supported";
+        return render(request,"tickets/methodnotsupported.html");
 
