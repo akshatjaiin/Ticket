@@ -130,7 +130,6 @@ input[type="text"]:focus-within {
 
 .disappear {
   position: absolute;
-  top: -999999px;
   transform: scale(0);
 }
 
@@ -206,4 +205,44 @@ input[type="text"]:focus-within {
 .ticket {
   padding: 1rem;
   width: fit-content;
+}
+
+#setting-btn {
+  display: flex;
+  background: transparent;
+  border: none;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1/1;
+  padding: 2.5px;
+  font-size: 22px;
+
+}
+
+#setting-btn:hover>svg {
+  rotate: 90deg;
+  transform: scale(1.2);
+  transition: 250ms ease-in all;
+}
+
+#setting-btn:not(:hover)>svg {
+  rotate: -90deg;
+  transition: 300ms ease-out all;
+}
+
+
+.setting-div:not(.disappear) {
+  animation: appear 250ms ease-out;
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    scale: 0;
+  }
+
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
 }

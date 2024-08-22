@@ -2,14 +2,26 @@ const form = document.getElementById("form-chat");
 const main = document.getElementById("main");
 const ticketViewer = document.getElementById("tickets");
 
-const makePaymentSuccess = async () => {
-  const res = await fetch("/ticket/ticket", {
-    "method": "POST"
+var isChatDisable = false;
+const inrPerUsd = 80;
+fetch('https://open.er-api.com/v6/latest/USD')
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.rates.INR);
+    inrPerUsd = data.rates.INR;
+    console.log(inrPerUsd, typeof inrPerUsd)
   })
-  return "";
+  .catch(err => console.error("Error while fetching inr per usd val \n Error: ", err));
+
+
+const makePaymentSuccess = async (tickets) => {
 }
 // a function to chat with ai  on backend
 const chatFetch = async (url, options) => {
+  if (isChatDisable) {
+    console.log("hi")
+    if (confirm("This session has ended. Would you like to start a new session?")) { window.location.reload() };
+  }
   // a div where prompt and res gonna store 
   const chatDiv = document.createElement('div');
   chatDiv.classList.add("chat-div");
@@ -35,7 +47,7 @@ const chatFetch = async (url, options) => {
   const aiResponse = JSON.parse(backendResponse.response)[0];
   // if user confirm the ticket
   if (backendResponse.confirm) {
-    form[2].disable = true;
+    isChatDisable = true;
     const ticketDiv = document.createElement('div');
     ticketDiv.classList.add("tickets-div");
     main.appendChild(ticketDiv);
@@ -52,39 +64,46 @@ const chatFetch = async (url, options) => {
           <p>Student: ${userInfo.student}</p>
           <p>Ticket_type: ${userInfo.ticket_type}</p>
           <p>Date: ${userInfo.day}-${userInfo.month}-${userInfo.year} </p>
-          <p>Price: ${backendResponse.ticketDetails[ticketId]}</p>
+          <p>Price: ${backendResponse.ticketDetails[ticketId]} INR</p>
         </div > `
       user++;
       totalPrice += backendResponse.ticketDetails[ticketId];
     }
-    ticketDiv.innerHTML += `<p class='total-price'>TotalPrice: <b>${totalPrice}</b></p>`;
+    ticketDiv.innerHTML += `<p class='total-price'>TotalPrice: <b>${totalPrice} INR</b></p>`;
     ticketDiv.innerHTML += `
     <div id="paynow-btn"></div>`
-    totalPrice = 0; // remove it after testing 
+    totalPrice = totalPrice / inrPerUsd;
+    totalPrice = parseFloat(totalPrice.toFixed(2));
+    // console.log(totalPrice)
     paypal.Buttons({
-      payment: function (data, actions) {
-        return actions.payment.create({
-          transactions: [{
-            amount: {
-              currency: 'INR', // or any other currency
-              value: `${totalPrice}` // the specific amount you want the user to pay
+      createOrder: function(data, actions) {
+        return actions.order.create({
+          "purchase_units": [
+            {
+              "amount": {
+                "currency_code": "USD",
+                "value": totalPrice
+              },
             }
-          }]
+          ]
         });
       },
-      onAuthorize: function (data, actions) {
-        return actions.payment.execute().then(function (payment) {
-          form[2].disable = false;
-          console.log(payment);
-        });
+      onApprove: function(data, actions) {
+        console.log("done")
+        fetch("/makepaymentsuccess/", {
+          "method": "POST",
+          "body": {
+            tickets: Object.keys(backendResponse.ticketDetails),
+          }
+        })
+          .then(res => res.json()).then(data => console.info("data: ", data))
+          .catch(err => console.error(err));
       },
-      onCancel: function (data, actions) {
+      onCancel: function(data, actions) {
         // payment cancelled, you can show an error message or redirect the user
-        form[2].disable = false;
         console.info("payment cancelled");
-        window.location.reload();
       },
-      onError: function (err) {
+      onError: function(err) {
         // error occurred, you can show an error message or redirect the user
         console.error("Error: ", err);
       },
@@ -149,4 +168,3 @@ document.getElementById("close-setting")
   .addEventListener("click", () => {
     settingDiv.classList.add("disappear")
   })
-document
