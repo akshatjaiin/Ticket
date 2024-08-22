@@ -83,7 +83,7 @@ def index(request):
                     year = user_data['user_info']['year']
                     book_date = date(year, month, day)
                     paid = False
-
+                age = None
                 fields = {
                 'name': name,
                 'age': age,
@@ -97,10 +97,13 @@ def index(request):
 
                 # Identify the first field with a value of None
                 first_none_field = next((field for field, value in fields.items() if value is None), None)
-
+                
                 if first_none_field is None:
                     response = send_message(f"you forget to ask {first_none_field}")
                     response_json = json.loads(response.text)
+                    resData.update({
+                    "response": response.text,
+                })
                     return JsonResponse(resData)
 
                 # Create and save the ticket
