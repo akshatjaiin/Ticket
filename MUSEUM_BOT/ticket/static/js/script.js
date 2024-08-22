@@ -2,6 +2,12 @@ const form = document.getElementById("form-chat");
 const main = document.getElementById("main");
 const ticketViewer = document.getElementById("tickets");
 
+const makePaymentSuccess = async () => {
+  const res = await fetch("/ticket/ticket", {
+    "method": "POST"
+  })
+  return "";
+}
 // a function to chat with ai  on backend
 const chatFetch = async (url, options) => {
   // a div where prompt and res gonna store 
@@ -27,9 +33,9 @@ const chatFetch = async (url, options) => {
 
   // parse the stringify output of ai 
   const aiResponse = JSON.parse(backendResponse.response)[0];
-
   // if user confirm the ticket
   if (backendResponse.confirm) {
+    form[2].disable = true;
     const ticketDiv = document.createElement('div');
     ticketDiv.classList.add("tickets-div");
     main.appendChild(ticketDiv);
@@ -54,7 +60,34 @@ const chatFetch = async (url, options) => {
     ticketDiv.innerHTML += `<p class='total-price'>TotalPrice: <b>${totalPrice}</b></p>`;
     ticketDiv.innerHTML += `
     <div id="paynow-btn"></div>`
+    totalPrice = 0; // remove it after testing 
     paypal.Buttons({
+      payment: function (data, actions) {
+        return actions.payment.create({
+          transactions: [{
+            amount: {
+              currency: 'INR', // or any other currency
+              value: `${totalPrice}` // the specific amount you want the user to pay
+            }
+          }]
+        });
+      },
+      onAuthorize: function (data, actions) {
+        return actions.payment.execute().then(function (payment) {
+          form[2].disable = false;
+          console.log(payment);
+        });
+      },
+      onCancel: function (data, actions) {
+        // payment cancelled, you can show an error message or redirect the user
+        form[2].disable = false;
+        console.info("payment cancelled");
+        window.location.reload();
+      },
+      onError: function (err) {
+        // error occurred, you can show an error message or redirect the user
+        console.error("Error: ", err);
+      },
       style: {
         layout: 'vertical',
         color: 'blue',
@@ -101,7 +134,6 @@ function chat(e) {
 
 // a eventlistener designed 
 form.addEventListener("submit", chat);
-
 
 //  for setting popuo
 const settingDiv = document.getElementById("setting-div")
