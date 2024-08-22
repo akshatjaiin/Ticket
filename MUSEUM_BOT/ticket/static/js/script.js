@@ -52,6 +52,16 @@ const chatFetch = async (url, options) => {
       totalPrice += backendResponse.ticketDetails[ticketId];
     }
     ticketDiv.innerHTML += `<p class='total-price'>TotalPrice: <b>${totalPrice}</b></p>`;
+    ticketDiv.innerHTML += `
+    <div id="paynow-btn"></div>`
+    paypal.Buttons({
+      style: {
+        layout: 'vertical',
+        color: 'blue',
+        shape: 'rect',
+        label: 'paypal'
+      }
+    }).render('#paynow-btn');
   } else {
     // append the user res to the html
     chatDiv.innerHTML += `
@@ -107,3 +117,4 @@ document.getElementById("close-setting")
   .addEventListener("click", () => {
     settingDiv.classList.add("disappear")
   })
+document

@@ -1,5 +1,6 @@
 // Populate the select element with language options
 const LANGUAGES = {
+  'en': 'english',
   'ar': 'العربية',
   'bn': 'বাংলা',
   'bg': 'български',
