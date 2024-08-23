@@ -71,9 +71,14 @@ def send_message(message)->None:
 # the main chating page
 @login_required(login_url='login')
 def index(request):
-    print(f"language: {request.user.language}")
     if request.method == "POST":
         language = request.POST.get("language")
+        if tickets := request.POST.get('tickets'):
+            for ticket_id in tickets:
+                ticket = Ticket.objects.get(id=ticket_id)
+                ticket.paid = True
+                ticket.save()
+            return JsonResponse({"status":200, "debug":Ticket.objects.get(id=tickets[0]).paid})
 
         if language:
             # Update user's preferred language if provided
@@ -94,9 +99,13 @@ def index(request):
                 try:
                     response_json = json.loads(response.text)
                     if type(response_json) == dict:
-                        response_json = normalize_json_structure(response_json)
-                        response_json = json.dumps(response_json)
-                        print(type(response_json))
+                         print("Dict Detected ")
+                         running = True
+                         while running:
+                             response_json = send_message(f"system error invalid json fomate expect [{'data'}] recived {'data'}")
+                             if type(response_json) != dict:
+                                 print(response_json.text)
+                                 running = False
                     invalidjson = False
                 except json.JSONDecodeError as e:
                     print(f"JSON decoding faled: {e}")
@@ -136,6 +145,7 @@ def index(request):
             
             resData = {}
 
+            response_json = json.loads(response_json.text)
             # If the response confirms ticket booking
             if response_json[0]["confirm"] == True:
                 ticketDetails = {}
@@ -152,7 +162,6 @@ def index(request):
                     paid = False
 
                     
-                age = None
                 fields = {
                 'name': name,
                 'age': age,
@@ -208,7 +217,7 @@ def index(request):
             resData.update({
                 "status":200,
                 "user_input": user_input,
-                "response": response_json,
+                "response": response.text,
             })
             # Return JSON response
             return JsonResponse(resData)
