@@ -3,11 +3,22 @@
   --clr-bg: #0f0f0f;
   --clr-nav: #000;
 }
+__variable_2c91d1 {
+  --font-mono: "__JetBrains_Mono_2c91d1", "__JetBrains_Mono_Fallback_2c91d1";
+}
+.__variable_da1155 {
+  --font-sans: "__Manrope_da1155", "__Manrope_Fallback_da1155";
+}
+
+.font-sans {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
 
 body,
 html {
   padding: 0px;
   margin: 0px;
+  font-family: var(--font-sans);
 }
 
 #root {
