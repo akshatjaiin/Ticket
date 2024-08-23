@@ -208,7 +208,7 @@ def index(request):
             resData.update({
                 "status":200,
                 "user_input": user_input,
-                "response": response_json,
+                "response": response.text,
             })
             # Return JSON response
             return JsonResponse(resData)
