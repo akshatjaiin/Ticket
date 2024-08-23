@@ -4,10 +4,31 @@
   --clr-nav: #000;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500&display=swap');
+
+:root {
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Manrope', sans-serif;
+}
+
+
+__variable_2c91d1 {
+  --font-mono: "__JetBrains_Mono_2c91d1", "__JetBrains_Mono_Fallback_2c91d1";
+}
+.__variable_da1155 {
+  --font-sans: "__Manrope_da1155", "__Manrope_Fallback_da1155";
+}
+
+.font-sans {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 body,
 html {
   padding: 0px;
   margin: 0px;
+  font-family: var(--font-sans);
+  font-size: 22px;
 }
 
 #root {
@@ -51,21 +72,21 @@ html {
   background: var(--clr-nav);
   max-width: 350px;
   min-width: 250px;
-  width: 20%;
+  width: 10%;
 }
 
 .chat {
-  margin-top: 1rem;
+  margin-top: 0px;
 }
 
 .chat>p {
   padding: 0px;
-  margin: 1px 0px;
+  margin: 0 0px;
   color: white;
 }
 
 .chat-div {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .chat-section {
@@ -119,7 +140,7 @@ input[type="text"]:focus-within {
 }
 
 .sidenavbar>ul>li:not(li:last-child):hover {
-  box-shadow: 2px 2px 4px #8a8a8a88, inset 2px 2px 4px #8a8a8a88;
+  box-shadow: 2px 2px 4px #8a8a8a88, inset 2px 2px 4px #b7b6b688;
 }
 
 .sidenavbar>ul>li:not(li:last-child):hover>a {
@@ -133,15 +154,15 @@ input[type="text"]:focus-within {
   transform: scale(0);
 }
 
-/* .tickets { */
-/*   height: 60vh; */
-/*   aspect-ratio: 1/1; */
-/*   background: var(--clr-bg); */
-/*   border-radius: 1rem; */
-/*   padding: 1rem; */
-/*   overflow-y: scroll; */
-/*   overflow-x: hidden; */
-/* } */
+.tickets {
+  height: 60vh; 
+  background: var(--clr-bg);
+  border-radius: 1rem;
+  padding: 1rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  aspect-ratio: 1/1;
+}
 
 
 
@@ -200,7 +221,10 @@ input[type="text"]:focus-within {
   color: red;
 }
 
-.tickets-div {}
+.user_prompt{
+  display: flex;
+  flex-direction: row-reverse;
+}
 
 .ticket {
   padding: 1rem;
@@ -247,10 +271,175 @@ input[type="text"]:focus-within {
   }
 }
 
-.user_input {
+
+
+@import url("https://fonts.googleapis.com/css2?family=Staatliches&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.user_prompt{
-  background-color: red;
+.ticket {
+    margin: auto;
+    padding: 0;
+    display: flex;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
 
+.left {
+    display: flex;
+}
+
+.image {
+    height: 250px;
+    width: 250px;
+    background-image: url("https://media.pitchfork.com/photos/60db53e71dfc7ddc9f5086f9/1:1/w_1656,h_1656,c_limit/Olivia-Rodrigo-Sour-Prom.jpg");
+    background-size: contain;
+    opacity: 0.85;
+}
+
+.admit-one {
+    position: absolute;
+    color: darkgray;
+    height: 250px;
+    padding: 0 10px;
+    letter-spacing: 0.15em;
+    display: flex;
+    text-align: center;
+    justify-content: space-around;
+    writing-mode: vertical-rl;
+    transform: rotate(-180deg);
+}
+
+.admit-one span:nth-child(2) {
+    color: white;
+    font-weight: 700;
+}
+
+.left .ticket-number {
+    height: 250px;
+    width: 250px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 5px;
+}
+
+.ticket-info {
+    padding: 10px 30px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.date {
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+    padding: 5px 0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.date span {
+    width: 100px;
+}
+
+.date span:first-child {
+    text-align: left;
+}
+
+.date span:last-child {
+    text-align: right;
+}
+
+.date .june-29 {
+    color: #d83565;
+    font-size: 20px;
+}
+
+.show-name {
+    font-size: 32px;
+    font-family: "Nanum Pen Script", cursive;
+    color: #d83565;
+}
+
+.show-name h1 {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #4a437e;
+}
+
+.time {
+    padding: 10px 0;
+    color: #4a437e;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: 700;
+}
+
+.time span {
+    font-weight: 400;
+    color: gray;
+}
+
+.left .time {
+    font-size: 16px;
+}
+
+.location {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    padding-top: 8px;
+    border-top: 1px solid gray;
+}
+
+.right {
+    width: 180px;
+    border-left: 1px dashed #404040;
+}
+
+.right .admit-one {
+    color: darkgray;
+}
+
+.right .admit-one span:nth-child(2) {
+    color: gray;
+}
+
+.right .right-info-container {
+    height: 250px;
+    padding: 10px 10px 10px 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.right .show-name h1 {
+    font-size: 18px;
+}
+
+.barcode {
+    height: 100px;
+}
+
+.barcode img {
+    height: 100%;
+}
+
+.right .ticket-number {
+    color: gray;
 }

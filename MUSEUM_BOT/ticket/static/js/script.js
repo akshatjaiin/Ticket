@@ -37,8 +37,7 @@ const chatFetch = async (url, options) => {
   const userPrompt = form[1].value.trim();
   chatDiv.innerHTML = `
     <div class="user_input">
-      <label for="prompt"> You </label>
-      <p name="prompt" class="user_prompt">${userPrompt}</p>
+      <p name="prompt" class="user_prompt"><span class="userSpanPrompt" >${userPrompt}</span></p>
     </div>`;
 
   form[1].value = "";
@@ -61,17 +60,66 @@ const chatFetch = async (url, options) => {
 
       for (const ticketId in backendResponse.ticketDetails) {
         const userInfo = aiResponse.users[user].user_info;
-        ticketDiv.innerHTML += ` 
-          <div class="ticket">
-            <h1>Ticket ${user + 1}</h1>
-            <p>Name: ${userInfo.name}</p> 
-            <p>Age: ${userInfo.age}</p> 
-            <p>Indian: ${userInfo.indian}</p>
-            <p>Student: ${userInfo.student}</p>
-            <p>Ticket_type: ${userInfo.ticket_type}</p>
-            <p>Date: ${userInfo.day}-${userInfo.month}-${userInfo.year}</p>
+        ticketDiv.innerHTML += `<br> <div class="ticket created-by-anniedotexe">
+        <div class="left">
+        <div class="image">
+            <p class="admit-one">
+                <span>${userInfo.ticket_type}</span>
+            </p>
+            <div class="ticket-number">
+                <p>${user + 1}</p>
+            </div>
+            <div class="ticket" class="bottom-left" style="position: absolute;background-color: rgba(0, 0, 0, 0.5); color: white; padding: 5px;">
             <p>Price: ${backendResponse.ticketDetails[ticketId]} INR</p>
-          </div>`;
+          </div>
+        </div>
+        <div class="ticket-info">
+            <p class="date">
+                <span>${userInfo.day}</span>
+                <span class="june-29">${userInfo.month}</span>
+                <span>${userInfo.year}</span>
+            </p>
+            <div class="show-name" style="display: flex; flex-direction: column;">
+                <h1>${userInfo.name}</h1>
+                <div>
+                    <span>student: </span>
+                    <span>${userInfo.student}</span>
+                </div>
+                <div>
+                    <span>indian</span>
+                    <span>${userInfo.indian}</span>
+                </div>
+                <div>
+                    <span>age</span>
+                    <span>${userInfo.age}</span>
+                </div>
+            </div>
+            <div class="time">
+                <p>10:00 AM <span>TO</span> 5 PM</p>
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <p class="admit-one">
+        </p>
+        <div class="right-info-container">
+            <div class="show-name">
+                <h1>Albert Hall</h1>
+            </div>
+            <div class="time">
+                <p>${userInfo.name}</p>
+                <p>10:00 AM <span>TO</span> 5 PM</p>
+            </div>
+            <div class="barcode">
+                <img src="https://external-preview.redd.it/cg8k976AV52mDvDb5jDVJABPrSZ3tpi1aXhPjgcDTbw.png?auto=webp&s=1c205ba303c1fa0370b813ea83b9e1bddb7215eb" alt="QR code">
+            </div>
+            <p class="ticket-number">
+                #20030220
+            </p>
+        </div>
+    </div>
+</div> 
+         <br> `;
         user++;
         totalPrice += backendResponse.ticketDetails[ticketId];
       }
