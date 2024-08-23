@@ -71,9 +71,14 @@ def send_message(message)->None:
 # the main chating page
 @login_required(login_url='login')
 def index(request):
-    print(f"language: {request.user.language}")
     if request.method == "POST":
         language = request.POST.get("language")
+        if tickets := request.POST.get('tickets'):
+            for ticket_id in tickets:
+                ticket = Ticket.objects.get(id=ticket_id)
+                ticket.paid = True
+                ticket.save()
+            return JsonResponse({"status":200, "debug":Ticket.objects.get(id=tickets[0]).paid})
 
         if language:
             # Update user's preferred language if provided
@@ -152,7 +157,6 @@ def index(request):
                     paid = False
 
                     
-                age = None
                 fields = {
                 'name': name,
                 'age': age,
