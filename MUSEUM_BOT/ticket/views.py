@@ -1,50 +1,40 @@
 # django modules
-from django.contrib.auth import authenticate, login, logout
-from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from datetime import date
+from django.db import IntegrityError
 from django.contrib.sessions.models import Session
-from django.shortcuts import get_object_or_404
+from django.shortcuts import  render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+
 # import
 import os
 import json
 from . import constants # some constants which we are using
+from datetime import date
 from dotenv import load_dotenv
 from .models import User, Ticket # models to save in db 
 from google.api_core import retry
 import google.generativeai as genai
 
-# cofiguring model api 
-load_dotenv()
-genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 
-# Select the model name based on the toggle
+load_dotenv() # load env
+genai.configure(api_key=os.getenv('GEMINI_API_KEY')) # cofiguring model api 
+
 model_name = 'gemini-1.5-flash'
-# Toggle this to switch between Gemini 1.5 with a system instruction, or Gemini 1.0 Pro.
-use_sys_inst = False
 
 # Initialize the model with safety settings
-if use_sys_inst:
-    model = genai.GenerativeModel(
-        model_name, system_instruction=constants.MUSEUM_BOT_PROMPT, safety_settings=constants.SAFE, 
-        generation_config= {'response_mime_type': "application/json"}
-    )
-    convo = model.start_chat(enable_automatic_function_calling=True)
-else:
-    model = genai.GenerativeModel(model_name, generation_config= {'response_mime_type': "application/json"}, safety_settings=constants.SAFE)
-    convo = model.start_chat(
-        history=[
-            {'role': 'user', 'parts': [constants.MUSEUM_BOT_PROMPT]},
-            {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']}
-        ],
-        enable_automatic_function_calling=True
-    )
+model = genai.GenerativeModel(
+    model_name, system_instruction=constants.MUSEUM_BOT_PROMPT, safety_settings=constants.SAFE, 
+    generation_config= {'response_mime_type': "application/json"}
+)
+convo = model.start_chat(history=[
+        {'role': 'user', 'parts': [constants.MUSEUM_BOT_PROMPT]},
+        {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']}
+    ], enable_automatic_function_calling=True)
 
 
-import json
+
 def normalize_json_structure(data):
     # If the input is a string, try to load it as JSON
     if isinstance(data, str):
@@ -84,28 +74,27 @@ def index(request):
     print(f"language: {request.user.language}")
     if request.method == "POST":
         language = request.POST.get("language")
+
         if language:
             # Update user's preferred language if provided
             request.user.language = language
             request.user.save()
             return HttpResponseRedirect(reverse("index"))
-        # Handle form submission
+        # Handle input form submission
         user_input = request.POST.get("user_input")
 
         # Process user input
         if user_input and user_input.strip(): 
             response = send_message(user_input)
+            print(type(response.text))
             print(f"user : {user_input}")
             print(f"ai json : {response.text}")
             invalidjson = True
             while invalidjson:
                 try:
                     response_json = json.loads(response.text)
-                    print(type(response_json))
                     response_json = normalize_json_structure(response_json)
-                   
-                    print(type(response_json))
-                    print(f"normalized json: {response_json} ")
+                    response_json = json.dumps(response_json)
                     invalidjson = False
                 except json.JSONDecodeError as e:
                     print(f"JSON decoding faled: {e}")
@@ -175,18 +164,21 @@ def index(request):
 
                 # Identify the first field with a value of None
                 first_none_field = next((field for field, value in fields.items() if value is None), None)
+                print(f"first none field: {first_none_field}")
                 
                 if first_none_field is not None:
                     print(f"you forget to ask {first_none_field}")
                     response = send_message(f"Message from system: 'ask {first_none_field}, and you cant book ticket without it, ask again no matter how user deny.'")
                     response_json = json.loads(response.text)
                     response_json = normalize_json_structure(response_json)
+                    response_json = json.dumps(response_json)
+                    print(type(response_json))
                     print(response_json)
 
                     resData.update({
                         "status":200,
                         "user_input": user_input,
-                        "response": response_json,
+                        "response":response.text,
                     })
                     # Return JSON response
                     return JsonResponse(resData)
@@ -227,15 +219,17 @@ def index(request):
                                 i hate when someone ask me more than one details at a response. i just wanna know what you can do, in a concise way.
                                 i might become nasty and give you same prompt again and again, 
                                 just remaind me if i did that and use different reminders each time]''')
-        print(f"ai first response: {response.text}")
+        print(f"ai first response without norm : {response.text}")
         response_json = json.loads(response.text)
         response_json = normalize_json_structure(response_json)
+        response_json = json.dumps(response_json)
+        print(type(response_json))
+        print(response_json)
+        
         # Render the initial page with the introductory message
-        return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")})
+        return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")}) # why hi
     return render(request, "ticket/index.html",{"firstResponse":"Bot is Down "})
     
-
-
 
 # creating a ticket url for every ticket so that user can acess those
 @login_required(login_url='login')

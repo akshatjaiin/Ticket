@@ -1,0 +1,24 @@
+script.js:14 Error while fetching inr per usd val 
+ Error:  
+TypeError: Assignment to constant variable.
+    at script.js:11:15
+(anonymous)	@	script.js:14
+
+script.js:44 
+Object
+response
+: 
+[{…}]
+status
+: 
+200
+user_input
+: 
+"hi"
+[[Prototype]]
+: 
+Object
+ticket/:1 Uncaught (in promise) 
+SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at chatFetch (script.js:47:27)
