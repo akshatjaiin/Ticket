@@ -38,7 +38,8 @@ const chatFetch = async (url, options) => {
   chatDiv.innerHTML = `
     <div class="user_input">
       <label for="prompt"> You </label>
-      <p name="prompt" class="user_prompt">${userPrompt}</p>
+      <p name="prompt" class="user_prompt"><span style="padding: 1px, 2px, 1px, 2px;  color: white;
+  background-color: rgb(31, 31, 31);" >${userPrompt}</span></p>
     </div>`;
 
   form[1].value = "";

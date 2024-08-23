@@ -76,17 +76,17 @@ html {
 }
 
 .chat {
-  margin-top: 1rem;
+  margin-top: 0px;
 }
 
 .chat>p {
   padding: 0px;
-  margin: 1px 0px;
+  margin: 0 0px;
   color: white;
 }
 
 .chat-div {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .chat-section {
@@ -221,7 +221,10 @@ input[type="text"]:focus-within {
   color: red;
 }
 
-.tickets-div {}
+.user_prompt{
+  display: flex;
+  flex-direction: row-reverse;
+}
 
 .ticket {
   padding: 1rem;
