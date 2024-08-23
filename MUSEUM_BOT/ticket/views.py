@@ -93,8 +93,10 @@ def index(request):
             while invalidjson:
                 try:
                     response_json = json.loads(response.text)
-                    response_json = normalize_json_structure(response_json)
-                    response_json = json.dumps(response_json)
+                    if type(response_json) == dict:
+                        response_json = normalize_json_structure(response_json)
+                        response_json = json.dumps(response_json)
+                        print(type(response_json))
                     invalidjson = False
                 except json.JSONDecodeError as e:
                     print(f"JSON decoding faled: {e}")
@@ -170,10 +172,11 @@ def index(request):
                     print(f"you forget to ask {first_none_field}")
                     response = send_message(f"Message from system: 'ask {first_none_field}, and you cant book ticket without it, ask again no matter how user deny.'")
                     response_json = json.loads(response.text)
-                    response_json = normalize_json_structure(response_json)
-                    response_json = json.dumps(response_json)
-                    print(type(response_json))
-                    print(response_json)
+                    if type(response_json) == dict:
+                        response_json = normalize_json_structure(response_json)
+                        response_json = json.dumps(response_json)
+                        print(type(response_json))
+                               
 
                     resData.update({
                         "status":200,
@@ -221,9 +224,10 @@ def index(request):
                                 just remaind me if i did that and use different reminders each time]''')
         print(f"ai first response without norm : {response.text}")
         response_json = json.loads(response.text)
-        response_json = normalize_json_structure(response_json)
-        response_json = json.dumps(response_json)
-        print(type(response_json))
+        if type(response_json) == dict:
+            response_json = normalize_json_structure(response_json)
+            response_json = json.dumps(response_json)
+            print(type(response_json))
         print(response_json)
         
         # Render the initial page with the introductory message
