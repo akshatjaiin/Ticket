@@ -13,10 +13,15 @@ import json
 from . import constants # some constants which we are using
 from datetime import date
 from dotenv import load_dotenv
+# Import date class from datetime module
+from datetime import date
 from .models import User, Ticket # models to save in db 
 from google.api_core import retry
 import google.generativeai as genai
 
+def get_date():
+    # return current date
+    return date.today() 
 
 load_dotenv() # load env
 genai.configure(api_key=os.getenv('GEMINI_API_KEY')) # cofiguring model api 
@@ -32,6 +37,11 @@ convo = model.start_chat(history=[
         {'role': 'user', 'parts': [constants.MUSEUM_BOT_PROMPT]},
         {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']}
     ], enable_automatic_function_calling=True)
+
+
+# Import date class from datetime module
+from datetime import date
+
 
 
 
@@ -192,7 +202,7 @@ def index(request):
         response_json = json.loads(response.text)
         return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi")})
     
-    
+
 # creating a ticket url for every ticket so that user can acess those
 @login_required(login_url='login')
 def ticket(request, ticket_id):
