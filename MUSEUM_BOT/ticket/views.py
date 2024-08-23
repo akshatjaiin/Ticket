@@ -5,7 +5,7 @@ from django.contrib.sessions.models import Session
 from django.shortcuts import  render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse  
 
 # import
 import os
@@ -33,7 +33,18 @@ convo = model.start_chat(history=[
         {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']}
     ], enable_automatic_function_calling=True)
 
-
+def makeValidJson(jsonData)->list:
+    if isinstance(jsonData, dict):
+        print("Dict Detected, handling...")
+        return [jsonData];
+    return jsonData;
+    
+def strToJSON(jsonStr: str)->list|dict:
+    try:
+        return json.loads(jsonStr)
+    except json.JSONDecodeError as err:
+        print("ai sended a destructured response");
+        return strToJSON(send_message(f"Incorrect JSON response: '{response.text}'. Please follow the correct format."));
 
 def normalize_json_structure(data):
     # If the input is a string, try to load it as JSON
@@ -45,7 +56,6 @@ def normalize_json_structure(data):
     else:
         # If data is already a list or dictionary, use it as-is
         parsed_data = data
-
     # Unwrap nested single-item lists
     while isinstance(parsed_data, list) and len(parsed_data) == 1:
         parsed_data = parsed_data[0]
@@ -61,123 +71,106 @@ def normalize_json_structure(data):
     # If it doesn't match any known structure, raise an error
     raise ValueError("Unknown JSON structure")
 
-
 # a func to chat with ai :)
 @retry.Retry(initial=30)
 def send_message(message)->None:
     """Send a message to the conversation and return the response."""
     return convo.send_message(message)
 
-
-
 @login_required(login_url='login')
 def index(request):
     if request.method == "POST":
-        language = request.POST.get("language")
-        
-        # Handling the ticket payment process
-        if tickets := request.POST.getlist('tickets'):
-            for ticket_id in tickets:
-                ticket = Ticket.objects.get(id=ticket_id)
-                ticket.paid = True
-                ticket.save()
-            return JsonResponse({"status": 200, "debug": Ticket.objects.get(id=tickets[0]).paid})
-
-        if language:
+        # changing user lang
+        if(language := request.POST.get("language")):
             # Update user's preferred language if provided
             request.user.language = language
             request.user.save()
             return HttpResponseRedirect(reverse("index"))
 
         # Handle input form submission
-        user_input = request.POST.get("user_input")
+        user_input = request.POST.get("user_input",False)
+        if not user_input:
+            print(user_input)
+            return JsonResponse({"status":400,"message":"Bad request","successful":False});
+        elif not user_input.strip():
+            return JsonResponse({"status":400,"message":"Bad request","successful":False});
 
-        if user_input and user_input.strip():
-            response = send_message(user_input)
-            print(f"user : {user_input}")
-            print(f"ai json : {response.text}")
+        response = send_message(user_input)
+        # for debuging we are gonna remove it at last
+        print(f"user : {user_input}")
+        print(f"ai json : {response.text}")
 
-            # Parse the AI response and ensure valid JSON
-            response_json = None
-            while True:
-                try:
+        # Parse the AI response and ensure valid JSON
+        response_json = strToJSON(response.text);
+        response_json = makeValidJson(response_json);
+
+        resData = {}
+        # Check if the response confirms ticket booking
+        if response_json[0]["confirm"]:
+            ticketDetails = {}
+            for user_data in response_json[0]["users"]:
+                name = user_data['user_info']['name']
+                age = user_data['user_info']['age']
+                indian = user_data['user_info']['indian']
+                student = user_data['user_info']['student']
+                ticket_type = user_data['user_info']['ticket_type']
+                day = user_data['user_info']['day']
+                month = user_data['user_info']['month']
+                year = user_data['user_info']['year']
+                book_date = date(year, month, day)
+                paid = False
+
+                # Validate that all required fields are provided
+                fields = {
+                    'name': name,
+                    'age': age,
+                    'indian': indian,
+                    'student': student,
+                    'ticket_type': ticket_type,
+                    'day': day,
+                    'month': month,
+                    'year': year
+                }
+
+                first_none_field = next((field for field, value in fields.items() if value is None), None)
+                if first_none_field:
+                    print(f"Missing field: {first_none_field}")
+                    response = send_message(f"Message from system: 'Please ask for {first_none_field}. You cannot book a ticket without it.'")
                     response_json = json.loads(response.text)
-                    if isinstance(response_json, dict):
-                        print("Dict Detected, handling...")
-                        response = send_message(f"System error: invalid JSON format. Expected a list but received a dict.")
-                        continue
-                    break
-                except json.JSONDecodeError as e:
-                    print(f"JSON decoding failed: {e}")
-                    response = send_message(f"Incorrect JSON response: '{response.text}'. Please follow the correct format.")
-            
-            resData = {}
+                    resData.update({
+                        "status": 200,
+                        "user_input": user_input,
+                        "response": response.text,
+                    })
+                    return JsonResponse(resData)
+                
+                # Save the ticket
+                ticket = Ticket(
+                    name=name,
+                    age=age,
+                    indian=indian,
+                    student=student,
+                    ticket_type=ticket_type,
+                    date=book_date,
+                    owner=request.user,
+                    paid=paid
+                )
+                ticket.save()
 
-            # Check if the response confirms ticket booking
-            if response_json[0]["confirm"]:
-                ticketDetails = {}
-                for user_data in response_json[0]["users"]:
-                    name = user_data['user_info']['name']
-                    age = user_data['user_info']['age']
-                    indian = user_data['user_info']['indian']
-                    student = user_data['user_info']['student']
-                    ticket_type = user_data['user_info']['ticket_type']
-                    day = user_data['user_info']['day']
-                    month = user_data['user_info']['month']
-                    year = user_data['user_info']['year']
-                    book_date = date(year, month, day)
-                    paid = False
+                # Calculate the ticket price
+                ticketDetails[ticket.id] = ticket.total_cost
 
-                    # Validate that all required fields are provided
-                    fields = {
-                        'name': name,
-                        'age': age,
-                        'indian': indian,
-                        'student': student,
-                        'ticket_type': ticket_type,
-                        'day': day,
-                        'month': month,
-                        'year': year
-                    }
+            resData['confirm'] = True
+            resData['ticketDetails'] = ticketDetails
 
-                    first_none_field = next((field for field, value in fields.items() if value is None), None)
-                    if first_none_field:
-                        print(f"Missing field: {first_none_field}")
-                        response = send_message(f"Message from system: 'Please ask for {first_none_field}. You cannot book a ticket without it.'")
-                        response_json = json.loads(response.text)
-                        resData.update({
-                            "status": 200,
-                            "user_input": user_input,
-                            "response": response.text,
-                        })
-                        return JsonResponse(resData)
-                    
-                    # Save the ticket
-                    ticket = Ticket(
-                        name=name,
-                        age=age,
-                        indian=indian,
-                        student=student,
-                        ticket_type=ticket_type,
-                        date=book_date,
-                        owner=request.user,
-                        paid=paid
-                    )
-                    ticket.save()
-
-                    # Calculate the ticket price
-                    ticketDetails[ticket.id] = ticket.total_cost
-
-                resData['confirm'] = True
-                resData['ticketDetails'] = ticketDetails
-
-            # Add user input and AI response to the response data
-            resData.update({
-                "status": 200,
-                "user_input": user_input,
-                "response": response.text,
-            })
-            return JsonResponse(resData)
+        # Add user input and AI response to the response data
+        resData.update({
+            "status": 200,
+            "response": response_json,
+            "successful":True,
+            "message":"ai response fetched successful",
+        })
+        return JsonResponse(resData)
     else:
         # Send an initial introduction message in the user's preferred language
         response = send_message(f"""[Hi, myself {request.user}. I don't want to book a ticket,
@@ -189,7 +182,7 @@ def index(request):
                                     I might repeat the same prompt again and again, 
                                     just remind me if I do that and use different reminders each time.]""")
         print(f"AI first response: {response.text}")
-        response_json = json.loads(response.text)
+        response_json = makeValidJson(strToJSON(response.text));
         return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi")})
     
     
@@ -217,15 +210,14 @@ def ticket(request, ticket_id):
 @login_required(login_url='login')
 def makepaymentsuccess(request):
     if request.method == "POST":
-        tickets = request.POST["tickets"]
-        for ticket_id in tickets:
-            ticket = Ticket.objects.get(id=ticket_id)
-            ticket.paid = True
+        tickets = json.loads(request.body.decode('utf-8'));
+        print("ticket conf , tickets:",tickets,type(tickets));
+        for ticket_id in tickets["tickets"]:
+            ticket = Ticket.objects.get(id=int(ticket_id))
+            ticket.paid = True # mark the tickets paid if payment is successful
             ticket.save()
-        return JsonResponse({"status":200, "debug":Ticket.objects.get(id=tickets[0]).paid})
-    else:
-        return render(request,"tickets/methodnotsupported.html")
-    return render(request,"tickets/methodnotsupported.html")
+        return JsonResponse({"status": 200, "successful": Ticket.objects.get(id=tickets["tickets"][0]).paid})
+    return JsonResponse({"site":"exist"}) 
 
 def login_view(request):
     if request.method == "POST":
