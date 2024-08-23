@@ -28,6 +28,7 @@ html {
   padding: 0px;
   margin: 0px;
   font-family: var(--font-sans);
+  font-size: 22px;
 }
 
 #root {
@@ -153,15 +154,15 @@ input[type="text"]:focus-within {
   transform: scale(0);
 }
 
-/* .tickets { */
-/*   height: 60vh; */
-/*   aspect-ratio: 1/1; */
-/*   background: var(--clr-bg); */
-/*   border-radius: 1rem; */
-/*   padding: 1rem; */
-/*   overflow-y: scroll; */
-/*   overflow-x: hidden; */
-/* } */
+.tickets {
+  height: 60vh; 
+  background: var(--clr-bg);
+  border-radius: 1rem;
+  padding: 1rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  aspect-ratio: 1/1;
+}
 
 
 
