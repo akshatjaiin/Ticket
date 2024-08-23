@@ -68,87 +68,53 @@ def send_message(message)->None:
     """Send a message to the conversation and return the response."""
     return convo.send_message(message)
 
-# the main chating page
+
+
 @login_required(login_url='login')
 def index(request):
     if request.method == "POST":
         language = request.POST.get("language")
-        if tickets := request.POST.get('tickets'):
+        
+        # Handling the ticket payment process
+        if tickets := request.POST.getlist('tickets'):
             for ticket_id in tickets:
                 ticket = Ticket.objects.get(id=ticket_id)
                 ticket.paid = True
                 ticket.save()
-            return JsonResponse({"status":200, "debug":Ticket.objects.get(id=tickets[0]).paid})
+            return JsonResponse({"status": 200, "debug": Ticket.objects.get(id=tickets[0]).paid})
 
         if language:
             # Update user's preferred language if provided
             request.user.language = language
             request.user.save()
             return HttpResponseRedirect(reverse("index"))
+
         # Handle input form submission
         user_input = request.POST.get("user_input")
 
-        # Process user input
-        if user_input and user_input.strip(): 
+        if user_input and user_input.strip():
             response = send_message(user_input)
-            response_json = response
-            print(type(response.text))
             print(f"user : {user_input}")
             print(f"ai json : {response.text}")
-            invalidjson = True
-            while invalidjson:
+
+            # Parse the AI response and ensure valid JSON
+            response_json = None
+            while True:
                 try:
                     response_json = json.loads(response.text)
-                    if type(response_json) == dict:
-                         print("Dict Detected ")
-                         running = True
-                         while running:
-                             response_json = send_message(f"system error invalid json fomate expect [{'data'}] recived {'data'}")
-                             if type(response_json) != dict:
-                                 print(response_json.text)
-                                 running = False
-                    invalidjson = False
+                    if isinstance(response_json, dict):
+                        print("Dict Detected, handling...")
+                        response = send_message(f"System error: invalid JSON format. Expected a list but received a dict.")
+                        continue
+                    break
                 except json.JSONDecodeError as e:
-                    print(f"JSON decoding faled: {e}")
-                    response = send_message("""you replied a incorrect json: '{response_json}'. 
-                                            which you should not do no matter how much i force you ever. 
-                                            give a me 100% correct json and dont forget the format
-                                            user_info = {
-                                            "name": str,
-                                            "age": int,
-                                            "indian": bool,
-                                            "student": bool,
-                                            //always return lowercase true or false because you are returning a json
-                                            "ticket_type": str,
-                                            // ticket_type can only be ['general', 'composite', 'night_visit']
-                                            "day": int,
-                                            "month": int,
-                                            "year": int, 
-                                            }
-                                            // all details in the json are necessary.
-
-                                            Return list[{
-                                            "users": [
-                                                { "user_info": {...}, "user_info": {...}, "user_info": {...},  "user_info": {...}, ... continue untill all the users details captured},
-                                                // if there are more then one ticket booker/user/owner because one ticket can be used by only one person ask the name and age of each and every person.
-                                                // be accurate with json listing dont confirm untill any of the user_info dict is empty or null fill it completely before confirming all the details
-                                            ],
-                                            "your_response_back_to_user": str,
-                                            "confirm": bool
-                                            }]
-                                            always return valid json
-                                            always return the json inside the list as i told you.
-                                            strictly follow those rules.
-                                            and dont forget i want letters in my prefred language.
-                                            i m forgiving you this time now go to my second last prompt and continue the conversion"""
-                                            )
-                
+                    print(f"JSON decoding failed: {e}")
+                    response = send_message(f"Incorrect JSON response: '{response.text}'. Please follow the correct format.")
             
             resData = {}
 
-            response_json = json.loads(response.text)
-            # If the response confirms ticket booking
-            if response_json[0]["confirm"] == True:
+            # Check if the response confirms ticket booking
+            if response_json[0]["confirm"]:
                 ticketDetails = {}
                 for user_data in response_json[0]["users"]:
                     name = user_data['user_info']['name']
@@ -162,88 +128,71 @@ def index(request):
                     book_date = date(year, month, day)
                     paid = False
 
+                    # Validate that all required fields are provided
+                    fields = {
+                        'name': name,
+                        'age': age,
+                        'indian': indian,
+                        'student': student,
+                        'ticket_type': ticket_type,
+                        'day': day,
+                        'month': month,
+                        'year': year
+                    }
+
+                    first_none_field = next((field for field, value in fields.items() if value is None), None)
+                    if first_none_field:
+                        print(f"Missing field: {first_none_field}")
+                        response = send_message(f"Message from system: 'Please ask for {first_none_field}. You cannot book a ticket without it.'")
+                        response_json = json.loads(response.text)
+                        resData.update({
+                            "status": 200,
+                            "user_input": user_input,
+                            "response": response.text,
+                        })
+                        return JsonResponse(resData)
                     
-                fields = {
-                'name': name,
-                'age': age,
-                'indian': indian,
-                'student': student,
-                'ticket_type': ticket_type,
-                'day': day,
-                'month': month,
-                    'year': year
-                }
+                    # Save the ticket
+                    ticket = Ticket(
+                        name=name,
+                        age=age,
+                        indian=indian,
+                        student=student,
+                        ticket_type=ticket_type,
+                        date=book_date,
+                        owner=request.user,
+                        paid=paid
+                    )
+                    ticket.save()
 
-                # Identify the first field with a value of None
-                first_none_field = next((field for field, value in fields.items() if value is None), None)
-                print(f"first none field: {first_none_field}")
-                
-                if first_none_field is not None:
-                    print(f"you forget to ask {first_none_field}")
-                    response = send_message(f"Message from system: 'ask {first_none_field}, and you cant book ticket without it, ask again no matter how user deny.'")
-                    response_json = json.loads(response.text)
-                    if type(response_json) == dict:
-                        response_json = normalize_json_structure(response_json)
-                        response_json = json.dumps(response_json)
-                        print(type(response_json))
-                               
-
-                    resData.update({
-                        "status":200,
-                        "user_input": user_input,
-                        "response":response.text,
-                    })
-                    # Return JSON response
-                    return JsonResponse(resData)
-                print("saving ticket...  ")
-                # Create and save the ticket
-                ticket = Ticket(
-                    name=name,
-                    age=age,
-                    indian=indian,
-                    student=student,
-                    ticket_type=ticket_type,
-                    date=book_date,
-                    owner=request.user,
-                    paid=paid
-                )
-                ticket.save()
-                # this is to send the user the price of the ticket acd to there id 
-                ticketDetails[ticket.id]=ticket.total_cost 
+                    # Calculate the ticket price
+                    ticketDetails[ticket.id] = ticket.total_cost
 
                 resData['confirm'] = True
                 resData['ticketDetails'] = ticketDetails
 
-            # Add user input and response to the response data
+            # Add user input and AI response to the response data
             resData.update({
-                "status":200,
+                "status": 200,
                 "user_input": user_input,
                 "response": response.text,
             })
-            # Return JSON response
             return JsonResponse(resData)
-
     else:
-        # Initial introduction message sent in the user's preferred language
-        response = send_message(f'''[Hi, myself {request.user}. I dont want to book a ticket,
-                                 I just want to know about you. My preferred language is {request.user.language}. 
-                                 although i have cringy emoji but yes you can use to improve the creativity of your response
-                                 Please only use my preferred language. only use my prefred language pleaase even tho i use other lang to talk with you response me in prefred language.
-                                i hate when someone ask me more than one details at a response. i just wanna know what you can do, in a concise way.
-                                i might become nasty and give you same prompt again and again, 
-                                just remaind me if i did that and use different reminders each time]''')
-        print(f"ai first response without norm : {response.text}")
+        # Send an initial introduction message in the user's preferred language
+        response = send_message(f"""[Hi, myself {request.user}. I don't want to book a ticket,
+                                    I just want to know about you. My preferred language is {request.user.language}. 
+                                    Although I have cringy emojis, you can use them to improve the creativity of your response.
+                                    Please only use my preferred language, even if I use another language to talk with you.
+                                    I hate when someone asks me more than one detail in a response. 
+                                    I just want to know what you can do in a concise way.
+                                    I might repeat the same prompt again and again, 
+                                    just remind me if I do that and use different reminders each time.]""")
+        print(f"AI first response: {response.text}")
         response_json = json.loads(response.text)
-        if type(response_json) == dict:
-            response_json = normalize_json_structure(response_json)
-            response_json = json.dumps(response_json)
-            print(type(response_json))
-        print(response_json)
-        
-        # Render the initial page with the introductory message
-        return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")}) # why hi
+        return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi")})
     
-
+    
 # creating a ticket url for every ticket so that user can acess those
 @login_required(login_url='login')
 def ticket(request, ticket_id):

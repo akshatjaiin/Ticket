@@ -74,7 +74,7 @@ const chatFetch = async (url, options) => {
     <div id="paynow-btn"></div>`
     totalPrice = totalPrice / inrPerUsd;
     totalPrice = parseFloat(totalPrice.toFixed(2));
-    // console.log(totalPrice)
+    console.log(totalPrice);
     paypal.Buttons({
       createOrder: function(data, actions) {
         return actions.order.create({
