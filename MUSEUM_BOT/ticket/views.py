@@ -91,6 +91,7 @@ def index(request):
         # Process user input
         if user_input and user_input.strip(): 
             response = send_message(user_input)
+            response_json = response
             print(type(response.text))
             print(f"user : {user_input}")
             print(f"ai json : {response.text}")
@@ -145,7 +146,7 @@ def index(request):
             
             resData = {}
 
-            response_json = json.loads(response_json.text)
+            response_json = json.loads(response.text)
             # If the response confirms ticket booking
             if response_json[0]["confirm"] == True:
                 ticketDetails = {}
@@ -241,7 +242,6 @@ def index(request):
         
         # Render the initial page with the introductory message
         return render(request, "ticket/index.html",{"firstResponse":response_json[0].get("your_response_back_to_user","Hi")}) # why hi
-    return render(request, "ticket/index.html",{"firstResponse":"Bot is Down "})
     
 
 # creating a ticket url for every ticket so that user can acess those
