@@ -4,10 +4,30 @@
   --clr-nav: #000;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500&display=swap');
+
+:root {
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Manrope', sans-serif;
+}
+
+
+__variable_2c91d1 {
+  --font-mono: "__JetBrains_Mono_2c91d1", "__JetBrains_Mono_Fallback_2c91d1";
+}
+.__variable_da1155 {
+  --font-sans: "__Manrope_da1155", "__Manrope_Fallback_da1155";
+}
+
+.font-sans {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 body,
 html {
   padding: 0px;
   margin: 0px;
+  font-family: var(--font-sans);
 }
 
 #root {
@@ -51,7 +71,7 @@ html {
   background: var(--clr-nav);
   max-width: 350px;
   min-width: 250px;
-  width: 20%;
+  width: 10%;
 }
 
 .chat {
@@ -119,7 +139,7 @@ input[type="text"]:focus-within {
 }
 
 .sidenavbar>ul>li:not(li:last-child):hover {
-  box-shadow: 2px 2px 4px #8a8a8a88, inset 2px 2px 4px #8a8a8a88;
+  box-shadow: 2px 2px 4px #8a8a8a88, inset 2px 2px 4px #b7b6b688;
 }
 
 .sidenavbar>ul>li:not(li:last-child):hover>a {
@@ -245,12 +265,4 @@ input[type="text"]:focus-within {
     opacity: 1;
     scale: 1;
   }
-}
-
-.user_input {
-}
-
-.user_prompt{
-  background-color: red;
-
 }
