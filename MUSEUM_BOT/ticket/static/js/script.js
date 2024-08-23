@@ -77,7 +77,8 @@ const chatFetch = async (url, options) => {
     let totalPrice = 0;
     for (const ticketId in backendResponse.ticketDetails) {
       const userInfo = aiResponse.users[user].user_info;
-      ticketDiv.innerHTML += `<br> <div class="ticket created-by-anniedotexe">
+      ticketDiv.innerHTML += `<br>
+ <div class="ticket created-by-anniedotexe">
         <div class="left">
         <div class="image">
             <p class="admit-one">
@@ -148,7 +149,7 @@ const chatFetch = async (url, options) => {
     console.log(`Total price in USD: ${totalPrice}`);
 
     paypal.Buttons({
-      createOrder: function (data, actions) {
+      createOrder: function(data, actions) {
         return actions.order.create({
           purchase_units: [{
             amount: {
@@ -158,7 +159,7 @@ const chatFetch = async (url, options) => {
           }]
         });
       },
-      onApprove: async function (data, actions) {
+      onApprove: async function(data, actions) {
         console.log("Payment approved");
         const tickets = Object.keys(backendResponse.ticketDetails);
         console.log(tickets);
@@ -178,10 +179,10 @@ const chatFetch = async (url, options) => {
           console.error("Error processing payment: ", err);
         }
       },
-      onCancel: function (data, actions) {
+      onCancel: function(data, actions) {
         console.info("Payment cancelled");
       },
-      onError: function (err) {
+      onError: function(err) {
         console.error("Payment error: ", err);
         alert("Error while payment\n Error :", err)
       },
@@ -189,7 +190,8 @@ const chatFetch = async (url, options) => {
         layout: 'vertical',
         color: 'blue',
         shape: 'rect',
-        label: 'paypal'
+        label: 'paypal',
+        align: 'center',
       }
     }).render('#paynow-btn');
   } else {
