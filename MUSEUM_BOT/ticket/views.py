@@ -99,9 +99,13 @@ def index(request):
                 try:
                     response_json = json.loads(response.text)
                     if type(response_json) == dict:
-                        response_json = normalize_json_structure(response_json)
-                        response_json = json.dumps(response_json)
-                        print(type(response_json))
+                         print("Dict Detected ")
+                         running = True
+                         while running:
+                             response_json = send_message(f"system error invalid json fomate expect [{'data'}] recived {'data'}")
+                             if type(response_json) != dict:
+                                 print(response_json.text)
+                                 running = False
                     invalidjson = False
                 except json.JSONDecodeError as e:
                     print(f"JSON decoding faled: {e}")
@@ -141,6 +145,7 @@ def index(request):
             
             resData = {}
 
+            response_json = json.loads(response_json.text)
             # If the response confirms ticket booking
             if response_json[0]["confirm"] == True:
                 ticketDetails = {}
