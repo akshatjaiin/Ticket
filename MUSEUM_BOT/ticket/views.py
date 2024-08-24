@@ -13,7 +13,7 @@ import json
 from . import constants # some constants which we are using
 from datetime import date
 from dotenv import load_dotenv
-from random import randint;
+from random import randint
 # Import date class from datetime module
 from datetime import date
 from .models import User, Ticket # models to save in db 
@@ -42,26 +42,26 @@ chat_history.append({'role': 'model', 'parts': ['OK I will fill response back to
 @retry.Retry(initial=5, maximum=3)  # Limiting retries to avoid long delays
 def send_message(message,history) -> None:
     """Send a message to the conversation and return the response."""
-    convo = model.start_chat(history=history);
+    convo = model.start_chat(history=history)
     res = convo.send_message(message)
     history.extend([
         {'role': 'user', 'parts': message},
         {'role': 'model', 'parts': res.text}
-    ]);
-    return res;
+    ])
+    return res
 
 def makeValidJson(jsonData)->list:
     if isinstance(jsonData, dict):
         print("Dict Detected, handling...")
-        return [jsonData];
-    return jsonData;
+        return [jsonData]
+    return jsonData
     
 def strToJSON(jsonStr: str,history)->list|dict:
     try:
         return json.loads(jsonStr)
     except Exception as err:
-        print("ai sended a destructured response");
-        return strToJSON(send_message(f"[ERROR]Incorrect JSON response: '{jsonStr}'. Please follow the correct format described on the rule section.",history),history);
+        print("ai sended a destructured response")
+        return strToJSON(send_message(f"[ERROR]Incorrect JSON response: '{jsonStr}'. Please follow the correct format described on the rule section.",history),history)
 
 @login_required(login_url='login')
 def index(request):
@@ -77,12 +77,12 @@ def index(request):
         if not user_input:
             return JsonResponse({"status": 400, "message": "Bad request", "successful": False})
 
-        session_id = request.POST.get("session_id");
+        session_id = request.POST.get("session_id")
         response = send_message(user_input,request.session[session_id])
         print(f"user: {user_input}")
         print(f"ai json: {response.text}")
         # Parse the AI response and ensure valid JSON
-        response_json = strToJSON(response.text,request.session[session_id]);
+        response_json = strToJSON(response.text,request.session[session_id])
         response_json = makeValidJson(response_json)
 
         res_data = {}
@@ -105,7 +105,7 @@ def index(request):
                 if missing_field:
                     print(f"Missing field: {missing_field}")
                     response = send_message(f"Message from system: 'Please ask for {missing_field}. You cannot book a ticket without it.'",request.session[session_id])
-                    response_json = strToJSON(response.text,request.session[session_id]);
+                    response_json = strToJSON(response.text,request.session[session_id])
                     response_json = makeValidJson(response_json)
                     return JsonResponse({
                         "status": 200,
@@ -157,13 +157,13 @@ def index(request):
 
     elif request.method == "GET":
         # Simplified initial introduction message
-        session_id = str(randint(1,9)*randint(1,9));
-        request.session[session_id] = chat_history;
+        session_id = str(randint(1,9)*randint(1,9))
+        request.session[session_id] = chat_history
         user_prompt = f"Hi, I'm {request.user}. My preferred language is {request.user.language}. Tell me about yourself and what you can do."
         response = send_message(user_prompt,request.session[session_id])
 
         print(f"AI first response: {response.text}")
-        response_json = makeValidJson(strToJSON(response.text,request.session[session_id]));
+        response_json = makeValidJson(strToJSON(response.text,request.session[session_id]))
         request.session.modified = True
         print(request.session,session_id)
         return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi",),"session_id":session_id})
@@ -275,3 +275,8 @@ def booked(request):
     tickets = Ticket.objects.filter(paid=True, owner=request.user)
     return render(request, "ticket/booked.html", {"tickets": tickets})
 
+def about(request):
+    return render(request, "ticket/about.html")
+
+def soon(request):
+    return render(request, "ticket/soon.html")
