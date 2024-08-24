@@ -153,11 +153,6 @@ def index(request):
             "message": "AI response fetched successfully",
         })
 
-        # Update session history and save it
-        request.session["chat_history"].extend([
-            {'role': 'user', 'parts': user_input},
-            {'role': 'model', 'parts': response.text}
-        ])
         request.session.modified = True
 
         return JsonResponse(res_data)
