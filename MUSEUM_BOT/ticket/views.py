@@ -18,7 +18,7 @@ from datetime import date
 from .models import User, Ticket # models to save in db 
 from google.api_core import retry
 import google.generativeai as genai
-
+ 
 def get_date():
     # return current date
     return date.today() 
@@ -27,29 +27,30 @@ load_dotenv() # load env
 genai.configure(api_key=os.getenv('GEMINI_API_KEY')) # cofiguring model api 
 
 model_name = 'gemini-1.5-flash'
+chat_history = [
+        {'role': 'user', 'parts': [constants.MUSEUM_BOT_PROMPT]},
+        {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']},
+    ]
 
 # Initialize the model with safety settings
 model = genai.GenerativeModel(
     model_name, system_instruction=constants.MUSEUM_BOT_PROMPT, safety_settings=constants.SAFE, 
     generation_config= {'response_mime_type': "application/json"}
 )
-convo = model.start_chat(history=[
-        {'role': 'user', 'parts': [constants.MUSEUM_BOT_PROMPT]},
-        {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']}
-    ], enable_automatic_function_calling=True)
+convo = model.start_chat(history=chat_history, enable_automatic_function_calling=True)
 
 def makeValidJson(jsonData)->list:
     if isinstance(jsonData, dict):
         print("Dict Detected, handling...")
-        return [jsonData];
-    return jsonData;
+        return [jsonData]
+    return jsonData
     
 def strToJSON(jsonStr: str)->list|dict:
     try:
         return json.loads(jsonStr)
     except Exception as err:
-        print("ai sended a destructured response");
-        return strToJSON(send_message(f"Incorrect JSON response: '{response.text or " "}'. Please follow the correct format."));
+        print("ai sended a destructured response")
+        return strToJSON(send_message(f"Incorrect JSON response: '{response.text or " "}'. Please follow the correct format."))
 
 def normalize_json_structure(data):
     # If the input is a string, try to load it as JSON
@@ -84,6 +85,7 @@ def send_message(message)->None:
 
 @login_required(login_url='login')
 def index(request):
+    
     if request.method == "POST":
         # changing user lang
         if(language := request.POST.get("language")):
@@ -96,9 +98,9 @@ def index(request):
         user_input = request.POST.get("user_input",False)
         if not user_input:
             print(user_input)
-            return JsonResponse({"status":400,"message":"Bad request","successful":False});
+            return JsonResponse({"status":400,"message":"Bad request","successful":False})
         elif not user_input.strip():
-            return JsonResponse({"status":400,"message":"Bad request","successful":False});
+            return JsonResponse({"status":400,"message":"Bad request","successful":False})
 
         response = send_message(user_input)
         # for debuging we are gonna remove it at last
@@ -106,8 +108,8 @@ def index(request):
         print(f"ai json : {response.text}")
 
         # Parse the AI response and ensure valid JSON
-        response_json = strToJSON(response.text);
-        response_json = makeValidJson(response_json);
+        response_json = strToJSON(response.text)
+        response_json = makeValidJson(response_json)
 
         resData = {}
         # Check if the response confirms ticket booking
@@ -141,8 +143,8 @@ def index(request):
                 if first_none_field:
                     print(f"Missing field: {first_none_field}")
                     response = send_message(f"Message from system: 'Please ask for {first_none_field}. You cannot book a ticket without it.'")
-                    response_json = strToJSON(response.text);
-                    response_json = makeValidJson(response_json);
+                    response_json = strToJSON(response.text)
+                    response_json = makeValidJson(response_json)
                     resData.update({
                         "status": 200,
                         "user_input": user_input,
@@ -189,7 +191,7 @@ def index(request):
                                     I might repeat the same prompt again and again, 
                                     just remind me if I do that and use different reminders each time.]""")
         print(f"AI first response: {response.text}")
-        response_json = makeValidJson(strToJSON(response.text));
+        response_json = makeValidJson(strToJSON(response.text))
         return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi")})
     else: 
         return JsonResponse({"message":"Method not allowed","status":405}) 
@@ -219,8 +221,8 @@ def ticket(request, ticket_id):
 @login_required(login_url='login')
 def makepaymentsuccess(request):
     if request.method == "POST":
-        tickets = json.loads(request.body.decode('utf-8'));
-        print("ticket conf , tickets:",tickets,type(tickets));
+        tickets = json.loads(request.body.decode('utf-8'))
+        print("ticket conf , tickets:",tickets,type(tickets))
         for ticket_id in tickets["tickets"]:
             ticket = Ticket.objects.get(id=int(ticket_id))
             ticket.paid = True # mark the tickets paid if payment is successful
