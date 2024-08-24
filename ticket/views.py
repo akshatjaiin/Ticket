@@ -13,7 +13,7 @@ import json
 from . import constants # some constants which we are using
 from datetime import date
 from dotenv import load_dotenv
-from random import randint;
+from random import randint
 # Import date class from datetime module
 from datetime import date
 from .models import User, Ticket # models to save in db 
@@ -42,30 +42,31 @@ chat_history.append({'role': 'model', 'parts': ['OK I will fill response back to
 @retry.Retry(initial=5, maximum=3)  # Limiting retries to avoid long delays
 def send_message(message,history) -> None:
     """Send a message to the conversation and return the response."""
-    convo = model.start_chat(history=history);
+    convo = model.start_chat(history=history)
     res = convo.send_message(message)
     history.extend([
         {'role': 'user', 'parts': message},
         {'role': 'model', 'parts': res.text}
-    ]);
-    return res;
+    ])
+    return res
+
 
 def strToJSON(jsonStr: str,history):
     try:
         return json.loads(jsonStr)
     except Exception as err:
-        print("ai sended a destructured response");
-        print(jsonStr);
-        res = strToJSON(send_message(f"[ERROR] '{jsonStr}'. Please follow the correct format described on the rule section.", history).text, history);
-        return res;
+        print("ai sended a destructured response")
+        print(jsonStr)
+        res = strToJSON(send_message(f"[ERROR] '{jsonStr}'. Please follow the correct format described on the rule section.", history).text, history)
+        return res
 def makeValidJson(jsonData,history)->list:
     if isinstance(jsonData, dict):
         print("Dict Detected, handling...")
-        jsonData = [jsonData];
+        jsonData = [jsonData]
     if(not jsonData[0].get("your_response_back_to_user",False)):
         return makeValidJson(strToJSON(f"[ERROR] you dont send the your_response_back_to_user pls refer rules and send the response , your prev res -> {jsonData}",history),history)
-    return jsonData;
-    
+    return jsonData
+
 
 @login_required(login_url='login')
 def index(request):
@@ -81,12 +82,12 @@ def index(request):
         if not user_input:
             return JsonResponse({"status": 400, "message": "Bad request", "successful": False})
 
-        session_id = request.POST.get("session_id");
+        session_id = request.POST.get("session_id")
         response = send_message(user_input,request.session[session_id])
         print(f"user: {user_input}")
         print(f"ai json: {response.text}")
         # Parse the AI response and ensure valid JSON
-        response_json = strToJSON(response.text,request.session[session_id]);
+        response_json = strToJSON(response.text,request.session[session_id])
         response_json = makeValidJson(response_json,request.session[session_id])
 
         res_data = {}
@@ -109,7 +110,9 @@ def index(request):
                 if missing_field:
                     print(f"Missing field: {missing_field}")
                     response = send_message(f"Message from system: 'Please ask for {missing_field}. You cannot book a ticket without it.'",request.session[session_id])
-                    response_json = strToJSON(response.text,request.session[session_id]);
+
+
+                    response_json = strToJSON(response.text,request.session[session_id])
                     response_json = makeValidJson(response_json,request.session[session_id])
                     return JsonResponse({
                         "status": 200,
@@ -156,13 +159,20 @@ def index(request):
 
     elif request.method == "GET":
         # Simplified initial introduction message
-        session_id = str(randint(1,9)*randint(1,9));
-        request.session[session_id] = chat_history;
-        user_prompt = f"Hi, I'm {request.user}. My preferred language is {request.user.language}. Tell me about yourself and what you can do."
+        session_id = str(randint(1,9)*randint(1,9))
+        request.session[session_id] = chat_history
+        user_prompt = f"""[Hi, myself {request.user}. I don't want to book a ticket,
+                            I just want to know about you. My preferred language is {request.user.language}. 
+                            Although I hate cringy emojis, you can use them to improve the creativity of your response.
+                            Please only use my preferred language, even if I use another language to talk with you.
+                            I hate when someone asks me more than one detail in a response. 
+                            I just want to know what you can do in a concise way.
+                            I might repeat the same prompt again and again, 
+                            just remind me if I do that and use different reminders each time.]"""
         response = send_message(user_prompt,request.session[session_id])
 
         print(f"AI first response: {response.text}")
-        response_json = makeValidJson(strToJSON(response.text,request.session[session_id]),request.session[session_id]);
+        response_json = makeValidJson(strToJSON(response.text,request.session[session_id]),request.session[session_id])
         request.session.modified = True
         print(request.session,session_id)
         return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi",),"session_id":session_id})
@@ -172,14 +182,7 @@ def index(request):
 
  # elif request.method == "GET":
         # Send an initial introduction message in the user's preferred language
-        # # user_prompt = f"""[Hi, myself {request.user}. I don't want to book a ticket,
-        #                     I just want to know about you. My preferred language is {request.user.language}. 
-        #                     Although I have cringy emojis, you can use them to improve the creativity of your response.
-        #                     Please only use my preferred language, even if I use another language to talk with you.
-        #                     I hate when someone asks me more than one detail in a response. 
-        #                     I just want to know what you can do in a concise way.
-        #                     I might repeat the same prompt again and again, 
-        #                     just remind me if I do that and use different reminders each time.]"""
+        # # user_prompt = 
 
         
 
@@ -274,3 +277,8 @@ def booked(request):
     tickets = Ticket.objects.filter(paid=True, owner=request.user)
     return render(request, "ticket/booked.html", {"tickets": tickets})
 
+def about(request):
+    return render(request, "ticket/about.html")
+
+def soon(request):
+    return render(request, "ticket/soon.html")
