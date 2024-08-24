@@ -1,11 +1,14 @@
 {% extends "ticket/layout.html" %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'css/booked.css' %}">
 {% block body %}
 
-<div class="fullbody" style="display: flex; flex-wrap: wrap; align-items: center;">
+<div class="fullbody overflow-auto" style="display: flex; flex-wrap: wrap; align-items: center; max-height: 100vh; overflow-y: scroll;">
     {% for ticket in tickets %}
-    <div class="ticket created-by-anniedotexe">
+    <br><br>
+    <div class="ticket created-by-anniedotexe m-3">
         <div class="left">
             <div class="image">
                 <p class="admit-one">
@@ -17,9 +20,9 @@
             </div>
             <div class="ticket-info">
                 <p class="date">
-                    <span>{{ ticket.day }}</span>
-                    <span class="june-29">{{ ticket.month }}</span>
-                    <span>{{ ticket.year }}</span>
+                    <span>{{ ticket.date|date:"d" }}</span>
+                    <span class="june-29">{{ ticket.date|date:"F" }}</span>
+                    <span>{{ ticket.date|date:"Y" }}</span>
                 </p>
                 <div class="show-name" style="display: flex; flex-direction: column;">
                     <h1>{{ ticket.name }}</h1>
@@ -62,6 +65,15 @@
             </div>
         </div>
     </div>
+
+
+    <br>
+    <br><br>
+    <br><br><br>
+    <br><br><br>
+    <br><br><br>
+    
+    
     {% endfor %}
 </div>
 

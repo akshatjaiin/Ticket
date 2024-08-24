@@ -283,8 +283,6 @@ def about_museum(request):
 
 
 def booked(request):
-     return render(request, "ticket/booked.html", 
-                   {
-                       "tickets": Ticket.objects.all().filter(paid=True, owner=request.user)
-                   })
+    tickets = Ticket.objects.filter(paid=True, owner=request.user)
+    return render(request, "ticket/booked.html", {"tickets": tickets})
 
