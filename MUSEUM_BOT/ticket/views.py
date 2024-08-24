@@ -141,7 +141,8 @@ def index(request):
                 if first_none_field:
                     print(f"Missing field: {first_none_field}")
                     response = send_message(f"Message from system: 'Please ask for {first_none_field}. You cannot book a ticket without it.'")
-                    response_json = json.loads(response.text)
+                    response_json = strToJSON(response.text);
+                    response_json = makeValidJson(response_json);
                     resData.update({
                         "status": 200,
                         "user_input": user_input,
@@ -171,12 +172,13 @@ def index(request):
         # Add user input and AI response to the response data
         resData.update({
             "status": 200,
+            "user_input": user_input,
             "response": response_json,
             "successful":True,
             "message":"ai response fetched successful",
         })
         return JsonResponse(resData)
-    else:
+    elif request.method == "GET":
         # Send an initial introduction message in the user's preferred language
         response = send_message(f"""[Hi, myself {request.user}. I don't want to book a ticket,
                                     I just want to know about you. My preferred language is {request.user.language}. 
@@ -189,6 +191,8 @@ def index(request):
         print(f"AI first response: {response.text}")
         response_json = makeValidJson(strToJSON(response.text));
         return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi")})
+    else: 
+        return JsonResponse({"message":"Method not allowed","status":405}) 
     
 
 # creating a ticket url for every ticket so that user can acess those
@@ -222,7 +226,7 @@ def makepaymentsuccess(request):
             ticket.paid = True # mark the tickets paid if payment is successful
             ticket.save()
         return JsonResponse({"status": 200, "successful": Ticket.objects.get(id=tickets["tickets"][0]).paid})
-    return JsonResponse({"site":"exist"}) 
+    return JsonResponse({"message":"Method not allowed","status":405}) 
 
 def login_view(request):
     if request.method == "POST":

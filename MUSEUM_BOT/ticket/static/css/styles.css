@@ -29,7 +29,7 @@ html {
   padding: 0px;
   margin: 0px;
   font-family: var(--font-sans);
-  font-size: 20px;
+  font-size: 19px;
 }
 
 #root {
@@ -170,6 +170,7 @@ input[type="text"]:focus-within {
 
 
 .setting-div {
+  font-size: 19px;
   position: absolute;
   height: 100vh;
   width: 100vw;
@@ -196,8 +197,7 @@ input[type="text"]:focus-within {
 }
 
 #settings {
-  margin-top: 5%;
-  padding: 2rem;
+  padding: 0.5rem;
   color: var(--clr-text);
   display: flex;
   flex-direction: column;
@@ -212,10 +212,14 @@ input[type="text"]:focus-within {
   color: tomato;
 }
 
-/* cursor: pointer; */
+#settings>a {
+  cursor: pointer;
+}
 
 #settings>a:hover {
   color: white;
+  transform: translateX(5%) scale(1.1);
+  font-weight: bold;
 }
 
 #settings>a.logout:hover {
@@ -257,8 +261,14 @@ input[type="text"]:focus-within {
 }
 
 
-.setting-div:not(.disappear) {
-  animation: appear 250ms ease-out;
+.setting-div:not(.disappear)>div:not(.closed) {
+  animation: appear 250ms ease-in;
+}
+
+.setting-div:not(.disappear)>div.closed {
+  scale: 0;
+  opacity: 0;
+  transition: 250ms ease-in all;
 }
 
 @keyframes appear {

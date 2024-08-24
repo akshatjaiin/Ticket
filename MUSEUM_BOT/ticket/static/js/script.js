@@ -60,24 +60,25 @@ const chatFetch = async (url, options) => {
 
   form[1].value = "";
 
-  // try {
-  let backendResponse = await fetch(url, options);
-  backendResponse = await backendResponse.json();
-  console.log(backendResponse);
+  autoScroll(scrollTop, clientHeight, scrollHeight);
+  try {
+    let backendResponse = await fetch(url, options);
+    backendResponse = await backendResponse.json();
+    console.log(backendResponse);
 
-  const aiResponse = backendResponse.response[0];
+    const aiResponse = backendResponse.response[0];
 
-  if (backendResponse.confirm) {
-    isChatDisable = true;
-    const ticketDiv = document.createElement('div');
-    ticketDiv.classList.add("tickets-div");
-    main.appendChild(ticketDiv);
+    if (backendResponse.confirm) {
+      isChatDisable = true;
+      const ticketDiv = document.createElement('div');
+      ticketDiv.classList.add("tickets-div");
+      main.appendChild(ticketDiv);
 
-    let user = 0;
-    let totalPrice = 0;
-    for (const ticketId in backendResponse.ticketDetails) {
-      const userInfo = aiResponse.users[user].user_info;
-      ticketDiv.innerHTML += `<br>
+      let user = 0;
+      let totalPrice = 0;
+      for (const ticketId in backendResponse.ticketDetails) {
+        const userInfo = aiResponse.users[user].user_info;
+        ticketDiv.innerHTML += `<br>
  <div class="ticket created-by-anniedotexe">
         <div class="left">
         <div class="image">
@@ -138,74 +139,80 @@ const chatFetch = async (url, options) => {
     </div>
 </div> 
          <br> `;
-      user++;
-      totalPrice += backendResponse.ticketDetails[ticketId];
-    }
-
-    ticketDiv.innerHTML += `<p class='total-price'>Total Price: <b>${totalPrice} INR</b></p>`;
-    ticketDiv.innerHTML += `<div id="paynow-btn"></div>`;
-
-    totalPrice = parseFloat((totalPrice / inrPerUsd).toFixed(2));
-    console.log(`Total price in USD: ${totalPrice}`);
-
-    paypal.Buttons({
-      createOrder: function(data, actions) {
-        return actions.order.create({
-          purchase_units: [{
-            amount: {
-              currency_code: "USD",
-              value: totalPrice
-            }
-          }]
-        });
-      },
-      onApprove: async function(data, actions) {
-        console.log("Payment approved");
-        const tickets = Object.keys(backendResponse.ticketDetails);
-        console.log(tickets);
-        try {
-          const res = await fetch("/ticket/makepaymentsuccess", {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': `${form[0].value}`
-            },
-            body: JSON.stringify({ tickets }),
-          });
-          const result = await res.json();
-          console.info("Payment success data: ", result);
-          alert("Payment was successfull")
-        } catch (err) {
-          console.error("Error processing payment: ", err);
-        }
-      },
-      onCancel: function(data, actions) {
-        console.info("Payment cancelled");
-      },
-      onError: function(err) {
-        console.error("Payment error: ", err);
-        alert("Error while payment\n Error :", err)
-      },
-      style: {
-        layout: 'vertical',
-        color: 'blue',
-        shape: 'rect',
-        label: 'paypal',
-        align: 'center',
+        user++;
+        totalPrice += backendResponse.ticketDetails[ticketId];
       }
-    }).render('#paynow-btn');
-  } else {
-    chatDiv.innerHTML += `
+
+      ticketDiv.innerHTML += `<p class='total-price'>Total Price: <b>${totalPrice} INR</b></p>`;
+      ticketDiv.innerHTML += `<div id="paynow-btn"></div>`;
+
+      totalPrice = parseFloat((totalPrice / inrPerUsd).toFixed(2));
+      console.log(`Total price in USD: ${totalPrice}`);
+
+      paypal.Buttons({
+        createOrder: function(data, actions) {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                currency_code: "USD",
+                value: totalPrice
+              }
+            }]
+          });
+        },
+        onApprove: async function(data, actions) {
+          console.log("Payment approved");
+          const tickets = Object.keys(backendResponse.ticketDetails);
+          console.log(tickets);
+          try {
+            const res = await fetch("/ticket/makepaymentsuccess", {
+              method: "POST",
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': `${form[0].value}`
+              },
+              body: JSON.stringify({ tickets }),
+            });
+            const result = await res.json();
+            console.info("Payment success data: ", result);
+            alert("Payment was successfull")
+          } catch (err) {
+            console.error("Error processing payment: ", err);
+          }
+        },
+        onCancel: function(data, actions) {
+          console.info("Payment cancelled");
+        },
+        onError: function(err) {
+          console.error("Payment error: ", err);
+          alert("Error while payment\n Error :", err)
+        },
+        style: {
+          layout: 'vertical',
+          color: 'blue',
+          shape: 'rect',
+          label: 'paypal',
+          align: 'center',
+        },
+        message: {
+          amount: totalPrice,
+          align: 'center',
+          color: 'black',
+          position: 'top',
+        }
+      }).render('#paynow-btn');
+    } else {
+      chatDiv.innerHTML += `
         <div class="chat response">
           <label for="response"> Bot </label>
           <p name="response" class="ai_response">${aiResponse.your_response_back_to_user}</p>
         </div>`;
+    }
+    autoScroll(scrollTop, clientHeight, scrollHeight);
+  } catch (error) {
+    console.error("Error during chatFetch: ", error);
+    chatDiv.innerHTML += `<p class="error">There was an error processing your request. Please try again later.</p>`;
   }
-  autoScroll(scrollTop, clientHeight, scrollHeight);
-  // } catch (error) {
-  //   console.error("Error during chatFetch: ", error);
-  //   chatDiv.innerHTML += `<p class="error">There was an error processing your request. Please try again later.</p>`;
-  // }
 };
 
 async function fetchTicket(ticketId) {
@@ -238,9 +245,12 @@ const settingDiv = document.getElementById("setting-div");
 const settingBtn = document.getElementById("setting-btn");
 
 settingBtn.addEventListener("click", () => {
+  settingDiv.firstElementChild.classList.remove("closed");
   settingDiv.classList.remove("disappear");
 });
 
 document.getElementById("close-setting").addEventListener("click", () => {
-  settingDiv.classList.add("disappear");
+  settingDiv.firstElementChild.classList.add("closed");
+  setTimeout(() => settingDiv.classList.add("disappear"), 300);
 });
+
