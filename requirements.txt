@@ -3,3 +3,4 @@ google.api_core
 google.generativeai
 python-dotenv
 django
+psycopg2-binary
