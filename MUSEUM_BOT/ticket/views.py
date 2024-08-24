@@ -27,17 +27,12 @@ load_dotenv() # load env
 genai.configure(api_key=os.getenv('GEMINI_API_KEY')) # cofiguring model api 
 
 model_name = 'gemini-1.5-flash'
-chat_history = [
-        {'role': 'user', 'parts': [constants.MUSEUM_BOT_PROMPT]},
-        {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']},
-    ]
 
 # Initialize the model with safety settings
 model = genai.GenerativeModel(
     model_name, system_instruction=constants.MUSEUM_BOT_PROMPT, safety_settings=constants.SAFE, 
     generation_config= {'response_mime_type': "application/json"}
 )
-convo = model.start_chat(history=chat_history, enable_automatic_function_calling=True)
 
 def makeValidJson(jsonData)->list:
     if isinstance(jsonData, dict):
@@ -45,47 +40,33 @@ def makeValidJson(jsonData)->list:
         return [jsonData]
     return jsonData
     
-def strToJSON(jsonStr: str)->list|dict:
-    try:
-        return json.loads(jsonStr)
-    except Exception as err:
-        print("ai sended a destructured response")
-        return strToJSON(send_message(f"Incorrect JSON response: '{response.text or " "}'. Please follow the correct format."))
 
-def normalize_json_structure(data):
-    # If the input is a string, try to load it as JSON
-    if isinstance(data, str):
-        try:
-            parsed_data = json.loads(data)
-        except json.JSONDecodeError:
-            raise ValueError("Invalid JSON format")
-    else:
-        # If data is already a list or dictionary, use it as-is
-        parsed_data = data
-    # Unwrap nested single-item lists
-    while isinstance(parsed_data, list) and len(parsed_data) == 1:
-        parsed_data = parsed_data[0]
 
-    # If the final structure is a dictionary, wrap it in a list
-    if isinstance(parsed_data, dict):
-        return [parsed_data]
-
-    # If the final structure is a list of dictionaries, return as-is
-    if isinstance(parsed_data, list) and all(isinstance(item, dict) for item in parsed_data):
-        return parsed_data
-
-    # If it doesn't match any known structure, raise an error
-    raise ValueError("Unknown JSON structure")
-
-# a func to chat with ai :)
-@retry.Retry(initial=30)
-def send_message(message)->None:
-    """Send a message to the conversation and return the response."""
-    return convo.send_message(message)
 
 @login_required(login_url='login')
 def index(request):
+    if "chat_history" not in request.session:
+        request.session["chat_history"] = [
+        {'role': 'user', 'parts': [constants.MUSEUM_BOT_PROMPT]},
+        {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']},
+    ]
+        
+
+    convo = model.start_chat(history=request.session["chat_history"], enable_automatic_function_calling=True)
+
+    @retry.Retry(initial=30)
+    def send_message(message)->None:
+        """Send a message to the conversation and return the response."""
+        return convo.send_message(message)
     
+    
+    def strToJSON(jsonStr: str)->list|dict:
+        try:
+            return json.loads(jsonStr)
+        except Exception as err:
+            print("ai sended a destructured response")
+            return strToJSON(send_message(f"Incorrect JSON response: '{jsonStr}'. Please follow the correct format."))
+
     if request.method == "POST":
         # changing user lang
         if(language := request.POST.get("language")):
@@ -182,14 +163,20 @@ def index(request):
         return JsonResponse(resData)
     elif request.method == "GET":
         # Send an initial introduction message in the user's preferred language
-        response = send_message(f"""[Hi, myself {request.user}. I don't want to book a ticket,
+        user_prompt = {
+            f"""[Hi, myself {request.user}. I don't want to book a ticket,
                                     I just want to know about you. My preferred language is {request.user.language}. 
                                     Although I have cringy emojis, you can use them to improve the creativity of your response.
                                     Please only use my preferred language, even if I use another language to talk with you.
                                     I hate when someone asks me more than one detail in a response. 
                                     I just want to know what you can do in a concise way.
                                     I might repeat the same prompt again and again, 
-                                    just remind me if I do that and use different reminders each time.]""")
+                                    just remind me if I do that and use different reminders each time.]"""
+        }
+        response = send_message(user_prompt)
+        request.session["chat_history"].append(user_prompt)
+        request.session["chat_history"].append(response)
+
         print(f"AI first response: {response.text}")
         response_json = makeValidJson(strToJSON(response.text))
         return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi")})
