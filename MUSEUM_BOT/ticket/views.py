@@ -166,7 +166,14 @@ def index(request):
         # Simplified initial introduction message
         session_id = str(randint(1,9)*randint(1,9))
         request.session[session_id] = chat_history
-        user_prompt = f"Hi, I'm {request.user}. My preferred language is {request.user.language}. Tell me about yourself and what you can do."
+        user_prompt = f"""[Hi, myself {request.user}. I don't want to book a ticket,
+                            I just want to know about you. My preferred language is {request.user.language}. 
+                            Although I hate cringy emojis, you can use them to improve the creativity of your response.
+                            Please only use my preferred language, even if I use another language to talk with you.
+                            I hate when someone asks me more than one detail in a response. 
+                            I just want to know what you can do in a concise way.
+                            I might repeat the same prompt again and again, 
+                            just remind me if I do that and use different reminders each time.]"""
         response = send_message(user_prompt,request.session[session_id])
 
         print(f"AI first response: {response.text}")
@@ -180,14 +187,7 @@ def index(request):
 
  # elif request.method == "GET":
         # Send an initial introduction message in the user's preferred language
-        # # user_prompt = f"""[Hi, myself {request.user}. I don't want to book a ticket,
-        #                     I just want to know about you. My preferred language is {request.user.language}. 
-        #                     Although I have cringy emojis, you can use them to improve the creativity of your response.
-        #                     Please only use my preferred language, even if I use another language to talk with you.
-        #                     I hate when someone asks me more than one detail in a response. 
-        #                     I just want to know what you can do in a concise way.
-        #                     I might repeat the same prompt again and again, 
-        #                     just remind me if I do that and use different reminders each time.]"""
+        # # user_prompt = 
 
         
 
