@@ -50,18 +50,23 @@ def send_message(message,history) -> None:
     ])
     return res
 
-def makeValidJson(jsonData)->list:
-    if isinstance(jsonData, dict):
-        print("Dict Detected, handling...")
-        return [jsonData]
-    return jsonData
-    
-def strToJSON(jsonStr: str,history)->list|dict:
+
+def strToJSON(jsonStr: str,history):
     try:
         return json.loads(jsonStr)
     except Exception as err:
         print("ai sended a destructured response")
-        return strToJSON(send_message(f"[ERROR]Incorrect JSON response: '{jsonStr}'. Please follow the correct format described on the rule section.",history),history)
+        print(jsonStr)
+        res = strToJSON(send_message(f"[ERROR] '{jsonStr}'. Please follow the correct format described on the rule section.", history).text, history)
+        return res
+def makeValidJson(jsonData,history)->list:
+    if isinstance(jsonData, dict):
+        print("Dict Detected, handling...")
+        jsonData = [jsonData]
+    if(not jsonData[0].get("your_response_back_to_user",False)):
+        return makeValidJson(strToJSON(f"[ERROR] you dont send the your_response_back_to_user pls refer rules and send the response , your prev res -> {jsonData}",history),history)
+    return jsonData
+
 
 @login_required(login_url='login')
 def index(request):
@@ -83,7 +88,7 @@ def index(request):
         print(f"ai json: {response.text}")
         # Parse the AI response and ensure valid JSON
         response_json = strToJSON(response.text,request.session[session_id])
-        response_json = makeValidJson(response_json)
+        response_json = makeValidJson(response_json,request.session[session_id])
 
         res_data = {}
         if response_json and response_json[0].get("confirm"):
@@ -105,8 +110,10 @@ def index(request):
                 if missing_field:
                     print(f"Missing field: {missing_field}")
                     response = send_message(f"Message from system: 'Please ask for {missing_field}. You cannot book a ticket without it.'",request.session[session_id])
+
+
                     response_json = strToJSON(response.text,request.session[session_id])
-                    response_json = makeValidJson(response_json)
+                    response_json = makeValidJson(response_json,request.session[session_id])
                     return JsonResponse({
                         "status": 200,
                         "user_input": user_input,
@@ -163,7 +170,7 @@ def index(request):
         response = send_message(user_prompt,request.session[session_id])
 
         print(f"AI first response: {response.text}")
-        response_json = makeValidJson(strToJSON(response.text,request.session[session_id]))
+        response_json = makeValidJson(strToJSON(response.text,request.session[session_id]),request.session[session_id])
         request.session.modified = True
         print(request.session,session_id)
         return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi",),"session_id":session_id})
