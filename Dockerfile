@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 
 # Install pip and dependencies
 RUN pip install --upgrade pip
-RUN pip install gunicorn uvicorn
+RUN pip install gunicorn uvicorn 
 
 # Copy the requirements file into the container
 COPY requirements.txt .
