@@ -1,5 +1,0 @@
-typing 
-google.api_core
-google.generativeai
-python-dotenv
-django
