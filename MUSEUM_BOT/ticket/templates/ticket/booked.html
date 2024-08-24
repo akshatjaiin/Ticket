@@ -1,0 +1,68 @@
+{% extends "ticket/layout.html" %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% block body %}
+
+<div class="fullbody" style="display: flex; flex-wrap: wrap; align-items: center;">
+    {% for ticket in tickets %}
+    <div class="ticket created-by-anniedotexe">
+        <div class="left">
+            <div class="image">
+                <p class="admit-one">
+                    <span>{{ ticket.ticket_type }}</span>
+                </p>
+                <div class="ticket-number">
+                    <p>{{ ticket.ticket_id }}</p>
+                </div>
+            </div>
+            <div class="ticket-info">
+                <p class="date">
+                    <span>{{ ticket.day }}</span>
+                    <span class="june-29">{{ ticket.month }}</span>
+                    <span>{{ ticket.year }}</span>
+                </p>
+                <div class="show-name" style="display: flex; flex-direction: column;">
+                    <h1>{{ ticket.name }}</h1>
+                    <div>
+                        <span>Student: </span>
+                        <span>{{ ticket.student }}</span>
+                    </div>
+                    <div>
+                        <span>Indian: </span>
+                        <span>{{ ticket.indian }}</span>
+                    </div>
+                    <div>
+                        <span>Age: </span>
+                        <span>{{ ticket.age }}</span>
+                    </div>
+                </div>
+                <div class="time">
+                    <p>10:00 AM <span>TO</span> 5 PM</p>
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <p class="admit-one">
+                <span>{{ ticket.ticket_type }}</span>
+            </p>
+            <div class="right-info-container">
+                <div class="show-name">
+                    <h1>Albert Hall</h1>
+                </div>
+                <div class="time">
+                    <p>{{ ticket.name }}</p>
+                    <p>10:00 AM <span>TO</span> 5 PM</p>
+                </div>
+                <div class="barcode">
+                    <img src="https://external-preview.redd.it/cg8k976AV52mDvDb5jDVJABPrSZ3tpi1aXhPjgcDTbw.png?auto=webp&s=1c205ba303c1fa0370b813ea83b9e1bddb7215eb" alt="QR code">
+                </div>
+                <p class="ticket-number">
+                    {{ ticket.ticket_id }}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

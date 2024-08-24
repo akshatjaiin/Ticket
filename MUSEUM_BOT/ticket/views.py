@@ -280,3 +280,11 @@ def register(request):
 
 def about_museum(request):
     return render(request, "ticket/about_museum.html")
+
+
+def booked(request):
+     return render(request, "ticket/booked.html", 
+                   {
+                       "tickets": Ticket.objects.all().filter(paid=True, owner=request.user)
+                   })
+
