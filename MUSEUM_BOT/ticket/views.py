@@ -34,105 +34,91 @@ model = genai.GenerativeModel(
     generation_config= {'response_mime_type': "application/json"}
 )
 
-def makeValidJson(jsonData)->list:
+def make_valid_json(jsonData)->list:
     if isinstance(jsonData, dict):
         print("Dict Detected, handling...")
         return [jsonData]
     return jsonData
     
-
-
+chat_history = []
+chat_history.append({'role': 'user', 'parts': f"{[constants.MUSEUM_BOT_PROMPT]}"})
+chat_history.append({'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']})
 
 @login_required(login_url='login')
 def index(request):
     if "chat_history" not in request.session:
-        request.session["chat_history"] = [
-        {'role': 'user', 'parts': [constants.MUSEUM_BOT_PROMPT]},
-        {'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']},
-    ]
-        
+        request.session["chat_history"] = []
 
     convo = model.start_chat(history=request.session["chat_history"], enable_automatic_function_calling=True)
 
-    @retry.Retry(initial=30)
-    def send_message(message)->None:
+    @retry.Retry(initial=5, maximum=3)  # Limiting retries to avoid long delays
+    def send_message(message) -> None:
         """Send a message to the conversation and return the response."""
         return convo.send_message(message)
-    
-    
-    def strToJSON(jsonStr: str)->list|dict:
+
+    def str_to_json(json_str: str) -> list | dict:
+        """Convert string to JSON with retry in case of malformed response."""
         try:
-            return json.loads(jsonStr)
-        except Exception as err:
-            print("ai sended a destructured response")
-            return strToJSON(send_message(f"Incorrect JSON response: '{jsonStr}'. Please follow the correct format."))
+            return json.loads(json_str)
+        except json.JSONDecodeError as e:
+            print(f"AI sent a malformed JSON response: {e}")
+            # Log the error and return an empty JSON structure instead of retrying the same message
+            return {}
 
     if request.method == "POST":
-        # changing user lang
-        if(language := request.POST.get("language")):
-            # Update user's preferred language if provided
+        # Handle changing user's preferred language
+        if language := request.POST.get("language"):
             request.user.language = language
             request.user.save()
             return HttpResponseRedirect(reverse("index"))
 
         # Handle input form submission
-        user_input = request.POST.get("user_input",False)
+        user_input = request.POST.get("user_input", "").strip()
         if not user_input:
-            print(user_input)
-            return JsonResponse({"status":400,"message":"Bad request","successful":False})
-        elif not user_input.strip():
-            return JsonResponse({"status":400,"message":"Bad request","successful":False})
+            return JsonResponse({"status": 400, "message": "Bad request", "successful": False})
 
         response = send_message(user_input)
-        # for debuging we are gonna remove it at last
-        print(f"user : {user_input}")
-        print(f"ai json : {response.text}")
+        print(f"user: {user_input}")
+        print(f"ai json: {response.text}")
 
         # Parse the AI response and ensure valid JSON
-        response_json = strToJSON(response.text)
-        response_json = makeValidJson(response_json)
+        response_json = str_to_json(response.text)
+        response_json = make_valid_json(response_json)
 
-        resData = {}
-        # Check if the response confirms ticket booking
-        if response_json[0]["confirm"]:
-            ticketDetails = {}
+        res_data = {}
+        if response_json and response_json[0].get("confirm"):
+            ticket_details = {}
             for user_data in response_json[0]["users"]:
-                name = user_data['user_info']['name']
-                age = user_data['user_info']['age']
-                indian = user_data['user_info']['indian']
-                student = user_data['user_info']['student']
-                ticket_type = user_data['user_info']['ticket_type']
-                day = user_data['user_info']['day']
-                month = user_data['user_info']['month']
-                year = user_data['user_info']['year']
-                book_date = date(year, month, day)
-                paid = False
+                user_info = user_data['user_info']
+                name = user_info.get('name')
+                age = user_info.get('age')
+                indian = user_info.get('indian')
+                student = user_info.get('student')
+                ticket_type = user_info.get('ticket_type')
+                day = user_info.get('day')
+                month = user_info.get('month')
+                year = user_info.get('year')
 
-                # Validate that all required fields are provided
-                fields = {
-                    'name': name,
-                    'age': age,
-                    'indian': indian,
-                    'student': student,
-                    'ticket_type': ticket_type,
-                    'day': day,
-                    'month': month,
-                    'year': year
-                }
-
-                first_none_field = next((field for field, value in fields.items() if value is None), None)
-                if first_none_field:
-                    print(f"Missing field: {first_none_field}")
-                    response = send_message(f"Message from system: 'Please ask for {first_none_field}. You cannot book a ticket without it.'")
-                    response_json = strToJSON(response.text)
-                    response_json = makeValidJson(response_json)
-                    resData.update({
+                # Check for missing fields
+                fields = {'name': name, 'age': age, 'indian': indian, 'student': student, 'ticket_type': ticket_type, 'day': day, 'month': month, 'year': year}
+                missing_field = next((field for field, value in fields.items() if value is None), None)
+                if missing_field:
+                    print(f"Missing field: {missing_field}")
+                    response = send_message(f"Message from system: 'Please ask for {missing_field}. You cannot book a ticket without it.'")
+                    response_json = str_to_json(response.text)
+                    response_json = make_valid_json(response_json)
+                    return JsonResponse({
                         "status": 200,
                         "user_input": user_input,
                         "response": response.text,
                     })
-                    return JsonResponse(resData)
-                
+
+                # Convert to date object
+                try:
+                    book_date = date(year, month, day)
+                except ValueError:
+                    return JsonResponse({"status": 400, "message": "Invalid date provided", "successful": False})
+
                 # Save the ticket
                 ticket = Ticket(
                     name=name,
@@ -142,47 +128,63 @@ def index(request):
                     ticket_type=ticket_type,
                     date=book_date,
                     owner=request.user,
-                    paid=paid
+                    paid=False
                 )
                 ticket.save()
 
                 # Calculate the ticket price
-                ticketDetails[ticket.id] = ticket.total_cost
+                ticket_details[ticket.id] = ticket.total_cost
 
-            resData['confirm'] = True
-            resData['ticketDetails'] = ticketDetails
+            res_data['confirm'] = True
+            res_data['ticketDetails'] = ticket_details
 
-        # Add user input and AI response to the response data
-        resData.update({
+        res_data.update({
             "status": 200,
             "user_input": user_input,
             "response": response_json,
-            "successful":True,
-            "message":"ai response fetched successful",
+            "successful": True,
+            "message": "AI response fetched successfully",
         })
-        return JsonResponse(resData)
+
+        # Update session history and save it
+        request.session["chat_history"].extend([
+            {'role': 'user', 'parts': user_input},
+            {'role': 'model', 'parts': response.text}
+        ])
+        request.session.modified = True
+
+        return JsonResponse(res_data)
+
     elif request.method == "GET":
-        # Send an initial introduction message in the user's preferred language
-        user_prompt = {
-            f"""[Hi, myself {request.user}. I don't want to book a ticket,
-                                    I just want to know about you. My preferred language is {request.user.language}. 
-                                    Although I have cringy emojis, you can use them to improve the creativity of your response.
-                                    Please only use my preferred language, even if I use another language to talk with you.
-                                    I hate when someone asks me more than one detail in a response. 
-                                    I just want to know what you can do in a concise way.
-                                    I might repeat the same prompt again and again, 
-                                    just remind me if I do that and use different reminders each time.]"""
-        }
+        # Simplified initial introduction message
+        user_prompt = f"Hi, I'm {request.user}. My preferred language is {request.user.language}. Tell me about yourself and what you can do."
+
         response = send_message(user_prompt)
-        request.session["chat_history"].append(user_prompt)
-        request.session["chat_history"].append(response)
+        request.session["chat_history"].extend([
+            {'role': 'user', 'parts': user_prompt},
+            {'role': 'model', 'parts': response.text}
+        ])
+        request.session.modified = True
 
         print(f"AI first response: {response.text}")
-        response_json = makeValidJson(strToJSON(response.text))
+        response_json = make_valid_json(str_to_json(response.text))
         return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi")})
-    else: 
-        return JsonResponse({"message":"Method not allowed","status":405}) 
-    
+
+    else:
+        return JsonResponse({"message": "Method not allowed", "status": 405})
+
+ # elif request.method == "GET":
+        # Send an initial introduction message in the user's preferred language
+        # # user_prompt = f"""[Hi, myself {request.user}. I don't want to book a ticket,
+        #                     I just want to know about you. My preferred language is {request.user.language}. 
+        #                     Although I have cringy emojis, you can use them to improve the creativity of your response.
+        #                     Please only use my preferred language, even if I use another language to talk with you.
+        #                     I hate when someone asks me more than one detail in a response. 
+        #                     I just want to know what you can do in a concise way.
+        #                     I might repeat the same prompt again and again, 
+        #                     just remind me if I do that and use different reminders each time.]"""
+
+        
 
 # creating a ticket url for every ticket so that user can acess those
 @login_required(login_url='login')
