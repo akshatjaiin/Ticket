@@ -13,6 +13,7 @@ import json
 from . import constants # some constants which we are using
 from datetime import date
 from dotenv import load_dotenv
+from random import randint;
 # Import date class from datetime module
 from datetime import date
 from .models import User, Ticket # models to save in db 
@@ -34,37 +35,36 @@ model = genai.GenerativeModel(
     generation_config= {'response_mime_type': "application/json"}
 )
 
-def make_valid_json(jsonData)->list:
-    if isinstance(jsonData, dict):
-        print("Dict Detected, handling...")
-        return [jsonData]
-    return jsonData
-    
 chat_history = []
 chat_history.append({'role': 'user', 'parts': f"{[constants.MUSEUM_BOT_PROMPT]}"})
 chat_history.append({'role': 'model', 'parts': ['OK I will fill response back to user to continue chat with him.']})
 
+@retry.Retry(initial=5, maximum=3)  # Limiting retries to avoid long delays
+def send_message(message,history) -> None:
+    """Send a message to the conversation and return the response."""
+    convo = model.start_chat(history=history);
+    res = convo.send_message(message)
+    history.extend([
+        {'role': 'user', 'parts': message},
+        {'role': 'model', 'parts': res.text}
+    ]);
+    return res;
+
+def makeValidJson(jsonData)->list:
+    if isinstance(jsonData, dict):
+        print("Dict Detected, handling...")
+        return [jsonData];
+    return jsonData;
+    
+def strToJSON(jsonStr: str,history)->list|dict:
+    try:
+        return json.loads(jsonStr)
+    except Exception as err:
+        print("ai sended a destructured response");
+        return strToJSON(send_message(f"[ERROR]Incorrect JSON response: '{jsonStr}'. Please follow the correct format described on the rule section.",history),history);
+
 @login_required(login_url='login')
 def index(request):
-    if "chat_history" not in request.session:
-        request.session["chat_history"] = []
-
-    convo = model.start_chat(history=request.session["chat_history"], enable_automatic_function_calling=True)
-
-    @retry.Retry(initial=5, maximum=3)  # Limiting retries to avoid long delays
-    def send_message(message) -> None:
-        """Send a message to the conversation and return the response."""
-        return convo.send_message(message)
-
-    def str_to_json(json_str: str) -> list | dict:
-        """Convert string to JSON with retry in case of malformed response."""
-        try:
-            return json.loads(json_str)
-        except json.JSONDecodeError as e:
-            print(f"AI sent a malformed JSON response: {e}")
-            # Log the error and return an empty JSON structure instead of retrying the same message
-            return {}
-
     if request.method == "POST":
         # Handle changing user's preferred language
         if language := request.POST.get("language"):
@@ -77,13 +77,13 @@ def index(request):
         if not user_input:
             return JsonResponse({"status": 400, "message": "Bad request", "successful": False})
 
-        response = send_message(user_input)
+        session_id = request.POST.get("session_id");
+        response = send_message(user_input,request.session[session_id])
         print(f"user: {user_input}")
         print(f"ai json: {response.text}")
-
         # Parse the AI response and ensure valid JSON
-        response_json = str_to_json(response.text)
-        response_json = make_valid_json(response_json)
+        response_json = strToJSON(response.text,request.session[session_id]);
+        response_json = makeValidJson(response_json)
 
         res_data = {}
         if response_json and response_json[0].get("confirm"):
@@ -104,9 +104,9 @@ def index(request):
                 missing_field = next((field for field, value in fields.items() if value is None), None)
                 if missing_field:
                     print(f"Missing field: {missing_field}")
-                    response = send_message(f"Message from system: 'Please ask for {missing_field}. You cannot book a ticket without it.'")
-                    response_json = str_to_json(response.text)
-                    response_json = make_valid_json(response_json)
+                    response = send_message(f"Message from system: 'Please ask for {missing_field}. You cannot book a ticket without it.'",request.session[session_id])
+                    response_json = strToJSON(response.text,request.session[session_id]);
+                    response_json = makeValidJson(response_json)
                     return JsonResponse({
                         "status": 200,
                         "user_input": user_input,
@@ -157,18 +157,16 @@ def index(request):
 
     elif request.method == "GET":
         # Simplified initial introduction message
+        session_id = str(randint(1,9)*randint(1,9));
+        request.session[session_id] = chat_history;
         user_prompt = f"Hi, I'm {request.user}. My preferred language is {request.user.language}. Tell me about yourself and what you can do."
-
-        response = send_message(user_prompt)
-        request.session["chat_history"].extend([
-            {'role': 'user', 'parts': user_prompt},
-            {'role': 'model', 'parts': response.text}
-        ])
-        request.session.modified = True
+        response = send_message(user_prompt,request.session[session_id])
 
         print(f"AI first response: {response.text}")
-        response_json = make_valid_json(str_to_json(response.text))
-        return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi")})
+        response_json = makeValidJson(strToJSON(response.text,request.session[session_id]));
+        request.session.modified = True
+        print(request.session,session_id)
+        return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi",),"session_id":session_id})
 
     else:
         return JsonResponse({"message": "Method not allowed", "status": 405})
