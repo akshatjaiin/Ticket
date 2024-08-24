@@ -69,23 +69,5 @@ function changeLanguage() {
   });
 }
 
-// Simulated translation function (replace with actual API call)
-function fetchTranslation(text, lang) {
-  // This is a mock function. Replace with actual API call to Google Translate or any translation service.
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`Translated [${text}] to ${lang}`); // Simulated response
-    }, 500);
-  });
-}
-
 select.addEventListener('change', changeLanguage);
 
-// Google Translate initialization (if needed)
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'en',
-    includedLanguages: 'ar,bn,bg,zh-CN,zh-TW,hr,cs,da,nl,et,fa,fi,fr,de,gu,el,hi,hu,it,ja,ko,kn,lv,lt,ml,mr,no,pl,pt,ro,ru,sr,sk,sl,es,sw,su,ta,te,th,tr,uk,ur,vi',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-  }, 'google_translate_element');
-}

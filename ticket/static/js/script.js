@@ -166,7 +166,7 @@ const chatFetch = async (url, options) => {
           const tickets = Object.keys(backendResponse.ticketDetails);
           console.log(tickets);
           try {
-            const res = await fetch("/ticket/makepaymentsuccess", {
+            const res = await fetch("/makepaymentsuccess", {
               method: "POST",
               headers: {
                 'Content-Type': 'application/json',
@@ -232,7 +232,7 @@ function chat(e) {
   e.preventDefault(); // so that the page not reload multiple time on chat
   if (!form[1].value) return;
   const formData = new FormData(form);
-  const url = "/ticket/";
+  const url = "/";
   const options = {
     method: "POST",
     body: formData
@@ -242,15 +242,17 @@ function chat(e) {
 
 form.addEventListener("submit", chat);
 
-const settingDiv = document.getElementById("setting-div");
 const settingBtn = document.getElementById("setting-btn");
 
+let settingDiv;
 settingBtn.addEventListener("click", () => {
+  settingDiv = document.getElementById("setting-div");
   settingDiv.firstElementChild.classList.remove("closed");
   settingDiv.classList.remove("disappear");
 });
 
 document.getElementById("close-setting").addEventListener("click", () => {
+  settingDiv = document.getElementById("setting-div");
   settingDiv.firstElementChild.classList.add("closed");
   setTimeout(() => settingDiv.classList.add("disappear"), 300);
 });
