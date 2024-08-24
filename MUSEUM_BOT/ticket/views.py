@@ -47,9 +47,9 @@ def makeValidJson(jsonData)->list:
 def strToJSON(jsonStr: str)->list|dict:
     try:
         return json.loads(jsonStr)
-    except json.JSONDecodeError as err:
+    except Exception as err:
         print("ai sended a destructured response");
-        return strToJSON(send_message(f"Incorrect JSON response: '{response.text}'. Please follow the correct format."));
+        return strToJSON(send_message(f"Incorrect JSON response: '{response.text or " "}'. Please follow the correct format."));
 
 def normalize_json_structure(data):
     # If the input is a string, try to load it as JSON
