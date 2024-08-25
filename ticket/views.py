@@ -106,7 +106,7 @@ def index(request):
 
                 # Check for missing fields
                 fields = {'name': name, 'age': age, 'indian': indian, 'student': student, 'ticket_type': ticket_type, 'day': day, 'month': month, 'year': year}
-                missing_field = next((field for field, value in fields.items() if not value ), None)
+                missing_field = next((field for field, value in fields.items() if value is None ), None)
                 if missing_field:
                     print(f"Missing field: {missing_field}")
                     response = send_message(f"[ERROR] Message from system: 'Please ask for {missing_field}. You cannot book a ticket without it.'",request.session[session_id])
