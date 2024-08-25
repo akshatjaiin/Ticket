@@ -83,7 +83,7 @@ def index(request):
             return JsonResponse({"status": 400, "message": "Bad request", "successful": False})
 
         session_id = request.POST.get("session_id")
-        response = send_message(user_input,request.session[session_id])
+        response = send_message(user_input + ", TodaysDate : "+request.POST.get("date"),request.session[session_id])
         print(f"user: {user_input}")
         print(f"ai json: {response.text}")
         # Parse the AI response and ensure valid JSON
