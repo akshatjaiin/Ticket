@@ -151,7 +151,7 @@ const chatFetch = async (url, options) => {
       console.log(`Total price in USD: ${totalPrice}`);
 
       paypal.Buttons({
-        createOrder: function(data, actions) {
+        createOrder: function (data, actions) {
           return actions.order.create({
             purchase_units: [{
               amount: {
@@ -161,7 +161,7 @@ const chatFetch = async (url, options) => {
             }]
           });
         },
-        onApprove: async function(data, actions) {
+        onApprove: async function (data, actions) {
           console.log("Payment approved");
           const tickets = Object.keys(backendResponse.ticketDetails);
           console.log(tickets);
@@ -181,10 +181,10 @@ const chatFetch = async (url, options) => {
             console.error("Error processing payment: ", err);
           }
         },
-        onCancel: function(data, actions) {
+        onCancel: function (data, actions) {
           console.info("Payment cancelled");
         },
-        onError: function(err) {
+        onError: function (err) {
           console.error("Payment error: ", err);
           alert("Error while payment\n Error :", err)
         },
@@ -205,6 +205,7 @@ const chatFetch = async (url, options) => {
     } else {
       chatDiv.innerHTML += `
         <div class="chat response">
+<button class="text-to-speech" onclick="speak(this)"></button>
           <label for="response"> Bot </label>
           <p name="response" class="ai_response">${aiResponse.your_response_back_to_user}</p>
         </div>`;
@@ -256,5 +257,5 @@ document.getElementById("close-setting").addEventListener("click", () => {
   settingDiv = document.getElementById("setting-div");
   settingDiv.firstElementChild.classList.add("closed");
   setTimeout(() => settingDiv.classList.add("disappear"), 300);
-});
+})
 

@@ -17,7 +17,7 @@ const LANGUAGES = {
   'de': 'Deutsch',
   'gu': 'ગુજરાતી',
   'el': 'ελληνικά',
-  'hi': 'हिन्दी',
+  'hi-IN': 'हिन्दी',
   'hu': 'magyar',
   'it': 'italiano',
   'ja': '日本語',
@@ -71,3 +71,14 @@ function changeLanguage() {
 
 select.addEventListener('change', changeLanguage);
 
+// for text to speech
+function speak(event) {
+  const text = event.parentElement.children[2].innerText;
+  console.log(text);
+  const sy = window.speechSynthesis;
+  const speakThis = new SpeechSynthesisUtterance(text);
+  speakThis.lang = select.value;
+  speakThis.voice = speechSynthesis.getVoices()[0];
+  console.log(speakThis)
+  sy.speak(speakThis);
+}
