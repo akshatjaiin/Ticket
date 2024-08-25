@@ -106,18 +106,17 @@ def index(request):
 
                 # Check for missing fields
                 fields = {'name': name, 'age': age, 'indian': indian, 'student': student, 'ticket_type': ticket_type, 'day': day, 'month': month, 'year': year}
-                missing_field = next((field for field, value in fields.items() if not value is None), None)
+
+                missing_field = next((field for field, value in fields.items() if not value ), None)
                 if missing_field:
                     print(f"Missing field: {missing_field}")
-                    response = send_message(f"Message from system: 'Please ask for {missing_field}. You cannot book a ticket without it.'",request.session[session_id])
-
-
+                    response = send_message(f"[ERROR] Message from system: 'Please ask for {missing_field}. You cannot book a ticket without it.'",request.session[session_id])
                     response_json = strToJSON(response.text,request.session[session_id])
                     response_json = makeValidJson(response_json,request.session[session_id])
                     return JsonResponse({
                         "status": 200,
                         "user_input": user_input,
-                        "response": response.text,
+                        "response": response_json,
                     })
 
                 # Convert to date object
