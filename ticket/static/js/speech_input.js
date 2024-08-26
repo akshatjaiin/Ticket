@@ -3,7 +3,10 @@
   'use strict';
 
   // check for support (webkit only)
-  if (!('webkitSpeechRecognition' in window)) return;
+  if (!('webkitSpeechRecognition' in window)) {
+	console.log("error no webkit found")
+	return;
+};
 
   var talkMsg = 'Speak now';
   // seconds to wait for more input after last
