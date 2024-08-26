@@ -120,10 +120,7 @@ html {
   padding: 5px;
 }
 
-.form-group>input {
-  padding: 0.3rem 1rem;
-  border-radius: 0.33rem;
-}
+
 
 input[type="text"]:focus-within {
   outline: none;

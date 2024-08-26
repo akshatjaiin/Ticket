@@ -226,6 +226,7 @@ def logout_view(request):
     return HttpResponseRedirect(reverse("index"))
 
 
+ 
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -258,7 +259,7 @@ def about_museum(request):
 
 
 def booked(request):
-    tickets = Ticket.objects.filter(paid=True, owner=request.user).order_by('-time')
+    tickets = Ticket.objects.filter(paid=True, owner=request.user).order_by('-created_at')
     return render(request, "ticket/booked.html", {"tickets": tickets})
 
 def about(request):
