@@ -50,8 +50,8 @@ const chatFetch = async (url, options) => {
 
   const userPrompt = form[1].value.trim();
   chatDiv.innerHTML = `
-    <div class="user_input">
-      <p name="prompt" class="user_prompt"><span class="userSpanPrompt" >${userPrompt}</span></p>
+    <div class="notranslate user_input" translate="no">
+      <p name="prompt" class=notranslate "user_prompt"><span class="userSpanPrompt" translate="no">${userPrompt}</span></p>
     </div>`;
 
   form[1].value = "";
