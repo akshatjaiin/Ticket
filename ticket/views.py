@@ -83,7 +83,7 @@ def index(request):
             return JsonResponse({"status": 400, "message": "Bad request", "successful": False})
 
         session_id = request.POST.get("session_id")
-        response = send_message(user_input + ", TodaysDate : "+request.POST.get("date"),request.session[session_id])
+        response = send_message(user_input ,request.session[session_id])
         print(f"user: {user_input}")
         print(f"ai json: {response.text}")
         # Parse the AI response and ensure valid JSON
@@ -167,7 +167,7 @@ def index(request):
                             Just Age One by one no need to rush. 
                             I just want to know what you can do in a concise way.
                             I might repeat the same prompt again and again, 
-                            just remind me if I do that and use different reminders each time.]"""
+                            just remind me if I do that and use different reminders each time.i never wanna book ticket for myself btw Todays time is {request.POST.get("date")} THIS DATE IS NOT THE DATE OF BOOKING*"""
         response = send_message(user_prompt,request.session[session_id])
 
         print(f"AI first response: {response.text}")

@@ -120,14 +120,14 @@ html {
   padding: 5px;
 }
 
-/* .form-group>input {
+.form-group>input {
   padding: 0.3rem 1rem;
   border-radius: 0.33rem;
 }
 
 input[type="text"]:focus-within {
   outline: none;
-} */
+}
 
 .sidenavbar>ul {
   margin: 0px;
@@ -315,7 +315,7 @@ input[type="text"]:focus-within {
 .image {
   height: 250px;
   width: 250px;
-  background-image: url("https://media.pitchfork.com/photos/60db53e71dfc7ddc9f5086f9/1:1/w_1656,h_1656,c_limit/Olivia-Rodrigo-Sour-Prom.jpg");
+  background-image: url("https://ak-d.tripcdn.com/images/0354v1200093tdhng5712_C_1000_560_Q80.jpg");
   background-size: contain;
   opacity: 0.85;
 }
