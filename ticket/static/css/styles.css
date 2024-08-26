@@ -4,6 +4,8 @@
   --clr-nav: #000;
 }
 
+
+
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500&display=swap');
 
 :root {
@@ -118,14 +120,14 @@ html {
   padding: 5px;
 }
 
-.form-group>input {
+/* .form-group>input {
   padding: 0.3rem 1rem;
   border-radius: 0.33rem;
 }
 
 input[type="text"]:focus-within {
   outline: none;
-}
+} */
 
 .sidenavbar>ul {
   margin: 0px;

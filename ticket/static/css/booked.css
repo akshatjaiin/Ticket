@@ -1,14 +1,7 @@
-
-
-
 @import url("https://fonts.googleapis.com/css2?family=Staatliches&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap");
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+
 
 .ticket {
   margin: auto;

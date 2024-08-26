@@ -1,8 +1,3 @@
-body {
-	margin-left: 9%;
-	min-width: 479px;
-}
-
 h1, h2, h3, h4, h5, h6 {
 	font-size: 1.5em;
 	margin: 1.5em 0 0.4em;
@@ -17,7 +12,7 @@ h1 {
 
 a.github-button {
     display: inline-block;
-    width: 100px;
+    width: 500px;
 }
 
 @media (min-width: 900px) {
@@ -47,6 +42,3 @@ a.github-button {
 	box-sizing: border-box;
 }
 
-textarea {
-	height: 160px;
-}

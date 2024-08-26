@@ -37,6 +37,7 @@
     // create wrapper if not present
     var wrapper = inputEl.parentNode;
     if (!wrapper.classList.contains('si-wrapper')) {
+		console.log("creating wrapper...")
       wrapper = document.createElement('div');
       wrapper.classList.add('si-wrapper');
       wrapper.appendChild(parent.removeChild(inputEl));
@@ -63,6 +64,7 @@
       micBtn.style.top = 0.125 * buttonSize + 'px';
       micBtn.style.height = micBtn.style.width = buttonSize + 'px';
       inputEl.style.paddingRight = buttonSize - inputRightBorder + 'px';
+	  console.log("button created successfully")
     }
 
     // append wrapper where input was
