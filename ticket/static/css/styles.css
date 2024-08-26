@@ -479,3 +479,50 @@ input[type="text"]:focus-within {
   display: flex;
   flex-direction: row;
 }
+
+#menu {
+  display: none;
+  background: var(--clr-bg);
+}
+
+#menu>button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 32px;
+}
+
+#close-nav {
+  display: none;
+  width: 100%;
+  justify-content: right;
+}
+
+@media screen and (max-width: 600px) {
+  #menu {
+    display: inline-block;
+    position: absolute;
+    left: 0.2rem;
+    z-index: 1;
+  }
+
+  #root {
+    flex-direction: column;
+  }
+
+  .sidenavbar {
+    position: absolute;
+    height: 100vh;
+    z-index: 2;
+    transition: 250ms ease-in-out all;
+  }
+
+  .sidenavbar.disappear-nav {
+    transform: translateX(-100%);
+  }
+
+  #close-nav {
+    display: inline-flex;
+  }
+}

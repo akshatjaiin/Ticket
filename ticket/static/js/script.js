@@ -8,3 +8,11 @@ document.getElementById("close-setting").addEventListener("click", () => {
   setTimeout(() => settingDiv.classList.add("disappear"), 300);
 })
 
+
+document.getElementById("menu").firstElementChild.addEventListener("click", (e) => {
+  document.querySelector(".sidenavbar").classList.remove("disappear-nav")
+})
+
+document.getElementById("close-nav").firstElementChild.addEventListener("click", (e) => {
+  document.querySelector(".sidenavbar").classList.add("disappear-nav")
+})
