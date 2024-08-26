@@ -83,7 +83,7 @@ def index(request):
             return JsonResponse({"status": 400, "message": "Bad request", "successful": False})
 
         session_id = request.POST.get("session_id")
-        response = send_message(user_input ,request.session[session_id])
+        response = send_message(user_input,request.session[session_id]);
         print(f"user: {user_input}")
         print(f"ai json: {response.text}")
         # Parse the AI response and ensure valid JSON
@@ -149,6 +149,7 @@ def index(request):
             "response": response_json,
             "successful": True,
             "message": "AI response fetched successfully",
+            "language": request.user.language ,
         })
 
         request.session.modified = True
@@ -159,23 +160,7 @@ def index(request):
         # Simplified initial introduction message
         session_id = str(randint(1,9)*randint(1,9))
         request.session[session_id] = chat_history
-        user_prompt = f"""[Hi, myself {request.user}. I don't want to book a ticket,
-                            I just want to know about you. My preferred language is {request.user.language}. 
-                            Although I hate cringy face emojis, you can use them to improve the creativity of your response.
-                            Please only use my preferred language, even if I use another language to talk with you.
-                            I hate when someone asks more than one detail/question in at a time.
-                            Just Age One by one no need to rush. 
-                            I just want to know what you can do in a concise way.
-                            I might repeat the same prompt again and again, 
-                            just remind me if I do that and use different reminders each time.i never wanna book ticket for myself btw Todays time is {request.POST.get("date")} THIS DATE IS NOT THE DATE OF BOOKING*"""
-        response = send_message(user_prompt,request.session[session_id])
-
-        print(f"AI first response: {response.text}")
-        response_json = makeValidJson(strToJSON(response.text,request.session[session_id]),request.session[session_id])
-        request.session.modified = True
-        print(request.session,session_id)
-        return render(request, "ticket/index.html", {"firstResponse": response_json[0].get("your_response_back_to_user", "Hi",),"session_id":session_id})
-
+        return render(request, "ticket/index.html", {"session_id":session_id,"user": request.user})
     else:
         return JsonResponse({"message": "Method not allowed", "status": 405})
 
