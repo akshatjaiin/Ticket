@@ -1,6 +1,8 @@
 // Populate the select element with language options
 const LANGUAGES = {
   'en': 'english',
+  'hi': 'हिन्दी',
+  'odia': 'ଓଡ଼ିଆ',
   'ar': 'العربية',
   'bn': 'বাংলা',
   'bg': 'български',
@@ -17,7 +19,6 @@ const LANGUAGES = {
   'de': 'Deutsch',
   'gu': 'ગુજરાતી',
   'el': 'ελληνικά',
-  'hi-IN': 'हिन्दी',
   'hu': 'magyar',
   'it': 'italiano',
   'ja': '日本語',

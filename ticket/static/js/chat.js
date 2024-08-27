@@ -2,7 +2,8 @@ const form = document.getElementById("form-chat");
 const main = document.getElementById("main");
 const ticketViewer = document.getElementById("tickets");
 const session_id = document.getElementById("session_id").innerText;
-let isChatDisable = false;  // a variable which switched when ai presented the ticket
+let isChatEnd = false;  // a variable which switched when ai presented the ticket
+var isChatDisable = true;  // a variable which switched when ai presented the ticket
 let inrPerUsd = 83;
 const updateExchangeRate = async () => {
   try {
@@ -37,7 +38,7 @@ const chatFetch = async (url, options) => {
   const scrollHeight = main.scrollHeight;
   console.log(form[1].value)
 
-  if (isChatDisable) {
+  if (isChatEnd) {
     if (confirm("This session has ended. Would you like to start a new session?")) {
       window.location.reload();
     }
@@ -65,7 +66,7 @@ const chatFetch = async (url, options) => {
     const aiResponse = backendResponse.response[0];
 
     if (backendResponse.confirm) {
-      isChatDisable = true;
+      isChatEnd = true;
       const ticketDiv = document.createElement('div');
       ticketDiv.classList.add("tickets-div");
       main.appendChild(ticketDiv);
@@ -146,7 +147,7 @@ const chatFetch = async (url, options) => {
       console.log(`Total price in USD: ${totalPrice}`);
 
       paypal.Buttons({
-        createOrder: function(data, actions) {
+        createOrder: function (data, actions) {
           return actions.order.create({
             purchase_units: [{
               amount: {
@@ -156,7 +157,7 @@ const chatFetch = async (url, options) => {
             }]
           });
         },
-        onApprove: async function(data, actions) {
+        onApprove: async function (data, actions) {
           console.log("Payment approved");
           const tickets = Object.keys(backendResponse.ticketDetails);
           console.log(tickets);
@@ -176,10 +177,10 @@ const chatFetch = async (url, options) => {
             console.error("Error processing payment: ", err);
           }
         },
-        onCancel: function(data, actions) {
+        onCancel: function (data, actions) {
           console.info("Payment cancelled");
         },
-        onError: function(err) {
+        onError: function (err) {
           console.error("Payment error: ", err);
           alert("Error while payment\n Error :", err)
         },
@@ -237,14 +238,16 @@ async function fetchTicket(ticketId) {
 
 function chat(e) {
   e.preventDefault(); // so that the page not reload multiple time on chat
-  if (!form[1].value) return;
+  if (isChatDisable || !form[1].value) return;
+  isChatDisable = true;
   const formData = new FormData(form);
   const url = "/";
   const options = {
     method: "POST",
     body: formData
   };
-  chatFetch(url, options);
+  chatFetch(url, options).then(() => isChatDisable = false
+  );
 }
 form.addEventListener("submit", chat);
 (() => {
@@ -266,7 +269,6 @@ form.addEventListener("submit", chat);
   fetch(url, options)
     .then(res => res.json())
     .then((data) => {
-      console.log(data)
       const aiResponse = data.response[0];
       const chatDiv = document.createElement('div');
       main.appendChild(chatDiv)
@@ -286,6 +288,6 @@ form.addEventListener("submit", chat);
           <label for="response"> Bot </label>
           <p name="response" class="ai_response">${aiResponse.your_response_back_to_user}</p>
         </div>`;
+      isChatDisable = false;
     });
-
 })()
