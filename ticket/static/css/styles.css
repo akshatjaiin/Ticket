@@ -66,7 +66,7 @@ html {
 
 #input_div>form {
   display: flex;
-  padding: 1rem;
+  padding: 2rem;
   justify-content: center;
 }
 
