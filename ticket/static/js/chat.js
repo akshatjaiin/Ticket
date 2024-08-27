@@ -1,4 +1,3 @@
-
 const form = document.getElementById("form-chat");
 const main = document.getElementById("main");
 const ticketViewer = document.getElementById("tickets");
@@ -47,11 +46,11 @@ const chatFetch = async (url, options) => {
   const chatDiv = document.createElement('div');
   chatDiv.classList.add("chat-div");
   main.appendChild(chatDiv);
-
-  const userPrompt = form[1].value.trim();
-  chatDiv.innerHTML = `
-    <div class="notranslate user_input" translate="no">
-      <p name="prompt" class=notranslate "user_prompt"><span class="userSpanPrompt" translate="no">${userPrompt}</span></p>
+  console.log(form[1].value)
+  const userPrompt = form[1].value;
+  console.log("data", userPrompt)
+  chatDiv.innerHTML = `<div class="notranslate user_input" translate="no">
+      <p name="prompt" class="user_prompt"><span class="userSpanPrompt" translate="no">${userPrompt}</span></p>
     </div>`;
 
   form[1].value = "";
@@ -146,7 +145,7 @@ const chatFetch = async (url, options) => {
       console.log(`Total price in USD: ${totalPrice}`);
 
       paypal.Buttons({
-        createOrder: function (data, actions) {
+        createOrder: function(data, actions) {
           return actions.order.create({
             purchase_units: [{
               amount: {
@@ -156,7 +155,7 @@ const chatFetch = async (url, options) => {
             }]
           });
         },
-        onApprove: async function (data, actions) {
+        onApprove: async function(data, actions) {
           console.log("Payment approved");
           const tickets = Object.keys(backendResponse.ticketDetails);
           console.log(tickets);
@@ -176,10 +175,10 @@ const chatFetch = async (url, options) => {
             console.error("Error processing payment: ", err);
           }
         },
-        onCancel: function (data, actions) {
+        onCancel: function(data, actions) {
           console.info("Payment cancelled");
         },
-        onError: function (err) {
+        onError: function(err) {
           console.error("Payment error: ", err);
           alert("Error while payment\n Error :", err)
         },
@@ -237,23 +236,27 @@ async function fetchTicket(ticketId) {
 
 function chat(e) {
   e.preventDefault(); // so that the page not reload multiple time on chat
-  if (!form[1].value) return;
+  if (!form[1].value) {
+    console.info("No input data found");
+    return;
+  }
+  console.log(form[1].value);
   const formData = new FormData(form);
   const url = "/";
   const options = {
     method: "POST",
     body: formData
   };
-  form.children[1].firstElementChild.firstChild.value = ""
+  // form.children[1].firstElementChild.firstChild.value = ""
   chatFetch(url, options);
 }
 form.addEventListener("submit", chat);
 
 
-const formData = new FormData(form);
-formData.append("date", Date());
-formData.delete("user_input")
-formData.append("user_input", `[Hi, myself ${document.getElementById("user").innerText}. I don't want to book a ticket,
+(() => {
+  const formData = new FormData(form);
+  formData.delete("user_input")
+  formData.append("user_input", `[Hi, myself ${document.getElementById("user").innerText}. I don't want to book a ticket,
                           I just want to know about you. My preferred language is {request.user.language}. 
                           Although I hate cringy face emojis, you can use them to improve the creativity of your response.
                           Please only use my preferred language, even if I use another language to talk with you.
@@ -262,20 +265,19 @@ formData.append("user_input", `[Hi, myself ${document.getElementById("user").inn
                           I just want to know what you can do in a concise way.
                           I might repeat the same prompt again and again, 
                           just remind me if I do that and use different reminders each time. Todays Date is ${Date()}]`);
-const url = "/";
-const options = {
-  method: "POST",
-  body: formData
-};
-console.log("Update")
-fetch(url, options)
-  .then(res => res.json())
-  .then((data) => {
-    console.log();
-    const aiResponse = data.response[0];
-    const chatDiv = document.createElement('div');
-    main.appendChild(chatDiv);
-    chatDiv.innerHTML += `
+  const url = "/";
+  const options = {
+    method: "POST",
+    body: formData
+  };
+  console.log("Update")
+  fetch(url, options)
+    .then(res => res.json())
+    .then((data) => {
+      const aiResponse = data.response[0];
+      const chatDiv = document.createElement('div');
+      main.appendChild(chatDiv);
+      chatDiv.innerHTML += `
 <div class="chat response">
 <button class="text-to-speech" onclick="speak(this)">
 <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1em" height="1em" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
@@ -290,5 +292,6 @@ fetch(url, options)
 <label for="response"> Bot </label>
 <p name="response" class="ai_response">${aiResponse.your_response_back_to_user}</p>
 </div>`;
-    document.getElementById('language').value = data.language;
-  });
+      document.getElementById('language').value = data.language;
+    });
+})();
