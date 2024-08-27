@@ -253,13 +253,14 @@ form.addEventListener("submit", chat);
   formData.append("user_input", `[Hi, i m your new ${document.getElementById("user").innerText}.I don't want to book a ticket for anyone now,
                           I just want to know about you.My preferred language is  ${document.getElementById("language-sys").innerText}. 
                           .I hate cringy face emojis.
+                          .Clients love consise results.
                           Please only use my preferred language, even if I use another language to talk with you.
                           I hate when someone asks more than one detail / question in at a time to my clients.
                           Just ask One by one no need to rush. 
                           Dont forget to ask the age of my clients for whom you gonna book the tickets.
                           I just want to know what you can do in a concise way.
                           client might reprompt you with same prompt again and again.
-                          just remind me if I do that and use different reminders each time.Todays Date is ${Date()}]`);
+                          just remind me if I do that and use different reminders each time.Todays Date is ${Date()}] Dont book the ticket before this. Date should be greater than or equal to current date.`);
   const url = "/";
   const options = {
     method: "POST",
