@@ -66,7 +66,7 @@ html {
 
 #input_div>form {
   display: flex;
-  padding: 2rem;
+  padding: 1rem;
   justify-content: center;
 }
 
@@ -168,10 +168,6 @@ input[type="text"]:focus-within {
   aspect-ratio: 1/1;
 }
 
-
-
-
-
 .setting-div {
   font-size: 19px;
   position: absolute;
@@ -180,7 +176,7 @@ input[type="text"]:focus-within {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1;
+  z-index: 2;
   background: #0a0a0a78;
 }
 
@@ -232,6 +228,11 @@ input[type="text"]:focus-within {
 .user_prompt {
   display: flex;
   flex-direction: row-reverse;
+}
+
+#language-sys {
+  position: absolute;
+  display: none;
 }
 
 .ticket {
@@ -511,7 +512,7 @@ input[type="text"]:focus-within {
   .sidenavbar {
     position: absolute;
     height: 100vh;
-    z-index: 2;
+    z-index: 1;
     transition: 250ms ease-in-out all;
   }
 

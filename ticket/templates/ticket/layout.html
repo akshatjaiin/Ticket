@@ -42,7 +42,7 @@
             <label for="language">Language</label>
             <form action="{% url 'index' %}" method="POST">
               {% csrf_token %}
-              <select name="language" id="language"> </select>
+              <select name="language" value={{language}} id="language"> </select>
               <input type="submit">       
             </form>
             <a>Support</a>

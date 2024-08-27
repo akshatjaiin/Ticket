@@ -51,7 +51,7 @@ const chatFetch = async (url, options) => {
   const userPrompt = form[1].value.trim();
   chatDiv.innerHTML = `
     <div class="notranslate user_input" translate="no">
-      <p name="prompt" class=notranslate "user_prompt"><span class="userSpanPrompt" translate="no">${userPrompt}</span></p>
+      <p name="prompt" class="user_prompt"><span class="userSpanPrompt" translate="no">${userPrompt}</span></p>
     </div>`;
 
   form[1].value = "";
@@ -146,7 +146,7 @@ const chatFetch = async (url, options) => {
       console.log(`Total price in USD: ${totalPrice}`);
 
       paypal.Buttons({
-        createOrder: function (data, actions) {
+        createOrder: function(data, actions) {
           return actions.order.create({
             purchase_units: [{
               amount: {
@@ -156,7 +156,7 @@ const chatFetch = async (url, options) => {
             }]
           });
         },
-        onApprove: async function (data, actions) {
+        onApprove: async function(data, actions) {
           console.log("Payment approved");
           const tickets = Object.keys(backendResponse.ticketDetails);
           console.log(tickets);
@@ -176,10 +176,10 @@ const chatFetch = async (url, options) => {
             console.error("Error processing payment: ", err);
           }
         },
-        onCancel: function (data, actions) {
+        onCancel: function(data, actions) {
           console.info("Payment cancelled");
         },
-        onError: function (err) {
+        onError: function(err) {
           console.error("Payment error: ", err);
           alert("Error while payment\n Error :", err)
         },
@@ -251,7 +251,7 @@ form.addEventListener("submit", chat);
   const formData = new FormData(form);
   formData.delete("user_input")
   formData.append("user_input", `[Hi, myself ${document.getElementById("user").innerText}.I don't want to book a ticket,
-                          I just want to know about you.My preferred language is  ${document.getElementById("language").innerText}. 
+                          I just want to know about you.My preferred language is  ${document.getElementById("language-sys").innerText}. 
                           .I hate cringy face emojis.only use them to improve the creativity of your response.
                           Please only use my preferred language, even if I use another language to talk with you.
                           I hate when someone asks more than one detail / question in at a time.
