@@ -523,3 +523,5 @@ input[type="text"]:focus-within {
     display: inline-flex;
   }
 }
+
+#form-chat {}

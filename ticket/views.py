@@ -149,7 +149,6 @@ def index(request):
             "response": response_json,
             "successful": True,
             "message": "AI response fetched successfully",
-            "language": request.user.language ,
         })
 
         request.session.modified = True
@@ -160,9 +159,10 @@ def index(request):
         # Simplified initial introduction message
         session_id = str(randint(1,9)*randint(1,9))
         request.session[session_id] = chat_history
-        return render(request, "ticket/index.html", {"session_id":session_id,"user": request.user})
+        return render(request, "ticket/index.html", {"session_id":session_id,"user": request.user, "language": request.user.language,})
     else:
         return JsonResponse({"message": "Method not allowed", "status": 405})
+
 
  # elif request.method == "GET":
         # Send an initial introduction message in the user's preferred language

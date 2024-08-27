@@ -6,6 +6,8 @@ Museum Bot
 {% endblock %}
 {% block body %}
 <p id="user" style="display:none;">{{ user }}</p>
+<br>
+<!-- <p id="language" >{{ language }}</p> -->
 <link rel="stylesheet" href="{% static 'css/speech-input.css' %}">
 <div class="chatwindow">
   <div id="main" class="chat-section" >
@@ -15,7 +17,6 @@ Museum Bot
     <form id="form-chat" >
       {% csrf_token %}
       <div class="form-group">
-        
         <!-- <input  class="form-control" type="text" name="user_input" placeholder="type something ..."> -->
         <input autofocus type="text" class="notranslate speech-input" placeholder="What's up?" name="user_input"  translate="no">
         <button type="submit" value="Submit">
@@ -24,17 +25,14 @@ Museum Bot
           </svg>
         </button>
       </div>
-      <!-- <input  class="form-control" type="text" name="user_input" placeholder="type something ..."> -->
       <input type="hidden" id="session_id" value="{{session_id}}" name="session_id">
     </form>
   </div>
 
-  
   <script src="{% static 'js/chat.js' %}"></script>
   <script src="{% static 'js/speech_input.js' %}"></script>
-
-  <!-- Place this tag in your head or just before your close body tag. -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
+ <!-- Place this tag in your head or just before your close body tag. -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
   
 
   {% endblock %}

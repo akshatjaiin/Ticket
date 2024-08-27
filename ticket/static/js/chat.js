@@ -247,24 +247,25 @@ function chat(e) {
     method: "POST",
     body: formData
   };
-  // form.children[1].firstElementChild.firstChild.value = ""
   chatFetch(url, options);
 }
 form.addEventListener("submit", chat);
 
+<<<<<<< HEAD
 
 (() => {
   const formData = new FormData(form);
   formData.delete("user_input")
-  formData.append("user_input", `[Hi, myself ${document.getElementById("user").innerText}. I don't want to book a ticket,
-                          I just want to know about you. My preferred language is {request.user.language}. 
-                          Although I hate cringy face emojis, you can use them to improve the creativity of your response.
+  formData.append("user_input", `[Hi, myself ${document.getElementById("user").innerText}.I don't want to book a ticket,
+                          I just want to know about you.My preferred language is  ${document.getElementById("language").innerText}. 
+                          .I hate cringy face emojis.only use them to improve the creativity of your response.
                           Please only use my preferred language, even if I use another language to talk with you.
-                          I hate when someone asks more than one detail/question in at a time.
+                          I hate when someone asks more than one detail / question in at a time.
                           Just Age One by one no need to rush. 
                           I just want to know what you can do in a concise way.
-                          I might repeat the same prompt again and again, 
-                          just remind me if I do that and use different reminders each time. Todays Date is ${Date()}]`);
+                          I might repeat the same prompt again and again,
+<<<<<<< HEAD
+    just remind me if I do that and use different reminders each time.Todays Date is ${Date()}]`);
   const url = "/";
   const options = {
     method: "POST",
@@ -274,11 +275,12 @@ form.addEventListener("submit", chat);
   fetch(url, options)
     .then(res => res.json())
     .then((data) => {
-      const aiResponse = data.response[0];
-      const chatDiv = document.createElement('div');
-      main.appendChild(chatDiv);
-      chatDiv.innerHTML += `
-<div class="chat response">
+      if (data && data.response && data.response.length > 0) {
+        const aiResponse = data.response[0];
+        const chatDiv = document.createElement('div');
+        main.appendChild(chatDiv);
+        chatDiv.innerHTML += `
+      <div class="chat response" >
 <button class="text-to-speech" onclick="speak(this)">
 <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1em" height="1em" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
 <g>
@@ -291,7 +293,15 @@ form.addEventListener("submit", chat);
 </button>
 <label for="response"> Bot </label>
 <p name="response" class="ai_response">${aiResponse.your_response_back_to_user}</p>
-</div>`;
-      document.getElementById('language').value = data.language;
-    });
-})();
+</div > `;
+        document.getElementById('language').value = data.language;
+      } else {
+        console.error("Invalid data or empty response.");
+      }
+    })
+})
+  .catch(error => {
+    console.error("Fetch error:", error);
+  });
+
+}) ();
