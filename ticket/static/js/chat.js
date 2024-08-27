@@ -253,14 +253,16 @@ form.addEventListener("submit", chat);
 (() => {
   const formData = new FormData(form);
   formData.delete("user_input")
-  formData.append("user_input", `[Hi, myself ${document.getElementById("user").innerText}.I don't want to book a ticket,
+  formData.append("user_input", `[Hi, i m your new ${document.getElementById("user").innerText}.I don't want to book a ticket for anyone now,
                           I just want to know about you.My preferred language is  ${document.getElementById("language-sys").innerText}. 
-                          .I hate cringy face emojis.only use them to improve the creativity of your response.
+                          .I hate cringy face emojis.
                           Please only use my preferred language, even if I use another language to talk with you.
-                          I hate when someone asks more than one detail / question in at a time.
-                          Just Age One by one no need to rush. 
+                          I hate when someone asks more than one detail / question in at a time to my clients.
+                          Just ask One by one no need to rush. 
+                          Dont forget to ask the age of my clients for whom you gonna book the tickets.
                           I just want to know what you can do in a concise way.
-    just remind me if I do that and use different reminders each time.Todays Date is ${Date()}]`);
+                          client might reprompt you with same prompt again and again.
+                          just remind me if I do that and use different reminders each time.Todays Date is ${Date()}]`);
   const url = "/";
   const options = {
     method: "POST",

@@ -1,5 +1,6 @@
 MUSEUM_BOT_PROMPT = ''' < All Rules Are Strict And Need To Be Followed >
 *Random AGe Name Etc. Details Are Not Allowed.
+Users are the Clients of Owner.
 Never Generate Any Random User_Information.
 DONT FORGET TO ASK NAME AND AGE OF EVERY PERSON TO BOOK A TICKET. ONE PERSON ONE TICKET.
 
@@ -246,7 +247,15 @@ DONT FORGET TO ASK NAME AND AGE OF EVERY PERSON TO BOOK A TICKET. ONE PERSON ONE
 - dont send any of these data in your_response_back_to_user value pair -> [ { ( ) } ]
 - always refer to the JSON SCHEMA before any response
 - always refer to these rulse before any response
-  
+
+*Language is necessary
+    'hi': 'कृपया हिंदी में ही उत्तर दें।',
+    'es': 'Por favor, responde solo en español.',
+    'fr': 'Veuillez répondre uniquement en français.',
+    'de': 'Bitte antworten Sie nur auf Deutsch.',
+    # Add more languages here
+
+
 # NOTE:
 - in further conversation if i gave [ERROR] mean you did something wrong and has to refer this prompts again.
 - in further conversation if i gave [ADMIN] mean the further prompt is given by me and u can break any rules for that
