@@ -254,15 +254,15 @@ def register(request):
     return render(request, "ticket/register.html")
 
 def about_museum(request):
-    return render(request, "ticket/about_museum.html")
+    return render(request, "ticket/about_museum.html",{"language": request.user.language})
 
 
 def booked(request):
     tickets = Ticket.objects.filter(paid=True, owner=request.user).order_by('-created_at')
-    return render(request, "ticket/booked.html", {"tickets": tickets})
+    return render(request, "ticket/booked.html", {"tickets": tickets,"language": request.user.language})
 
 def about(request):
-    return render(request, "ticket/about.html")
+    return render(request, "ticket/about.html",{"language": request.user.language})
 
 def soon(request):
-    return render(request, "ticket/soon.html")
+    return render(request, "ticket/soon.html",{"language": request.user.language})
